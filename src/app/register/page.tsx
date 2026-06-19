@@ -45,11 +45,11 @@ export default function RegisterPage() {
         style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
       >
         <div>
-          <h1 className="text-2xl font-bold">Реєстрація</h1>
+          <h1 className="text-2xl font-bold">Create account</h1>
           <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>
-            Вже є акаунт?{" "}
+            Already have an account?{" "}
             <Link href="/login" style={{ color: "var(--accent)" }}>
-              Увійти
+              Sign in
             </Link>
           </p>
         </div>
@@ -73,7 +73,7 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Нікнейм</label>
+            <label className="block text-sm font-medium mb-1">Username</label>
             <input
               type="text"
               required
@@ -91,7 +91,7 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Пароль</label>
+            <label className="block text-sm font-medium mb-1">Password</label>
             <input
               type="password"
               required
@@ -120,7 +120,7 @@ export default function RegisterPage() {
             className="w-full py-2 rounded-lg font-semibold text-sm transition-opacity disabled:opacity-60"
             style={{ background: "var(--accent)", color: "#fff" }}
           >
-            {loading ? "Реєструємось..." : "Створити акаунт"}
+            {loading ? "Creating account..." : "Create account"}
           </button>
         </form>
       </div>

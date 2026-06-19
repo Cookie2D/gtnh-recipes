@@ -11,7 +11,7 @@ export default async function DashboardPage() {
 
   if (!user) redirect("/login");
 
-  const { data: recipesCount } = await supabase
+  const { count: recipesCount } = await supabase
     .from("recipes")
     .select("id", { count: "exact", head: true })
     .eq("user_id", user.id);
@@ -29,31 +29,25 @@ export default async function DashboardPage() {
     <div className="space-y-8">
       <div>
         <h1 className="text-3xl font-bold">
-          Привіт, <span style={{ color: "var(--accent)" }}>{username}</span>!
+          Welcome back, <span style={{ color: "var(--accent)" }}>{username}</span>!
         </h1>
         <p className="mt-1" style={{ color: "var(--muted)" }}>
-          Твій центр управління рецептами і крафтами.
+          Your crafting recipe hub.
         </p>
       </div>
 
-      {/* Quick actions */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         <Link
           href="/calculator"
           className="flex items-center gap-4 p-5 rounded-xl border transition-colors hover:border-orange-500/50"
           style={{ background: "var(--surface)", borderColor: "var(--border)" }}
         >
-          <div
-            className="p-3 rounded-lg"
-            style={{ background: "var(--accent-dim)" }}
-          >
+          <div className="p-3 rounded-lg" style={{ background: "var(--accent-dim)" }}>
             <Calculator size={24} style={{ color: "var(--accent)" }} />
           </div>
           <div>
-            <p className="font-semibold">Калькулятор</p>
-            <p className="text-sm" style={{ color: "var(--muted)" }}>
-              Розрахувати крафт
-            </p>
+            <p className="font-semibold">Calculator</p>
+            <p className="text-sm" style={{ color: "var(--muted)" }}>Calculate a crafting chain</p>
           </div>
         </Link>
 
@@ -62,17 +56,12 @@ export default async function DashboardPage() {
           className="flex items-center gap-4 p-5 rounded-xl border transition-colors hover:border-orange-500/50"
           style={{ background: "var(--surface)", borderColor: "var(--border)" }}
         >
-          <div
-            className="p-3 rounded-lg"
-            style={{ background: "var(--accent-dim)" }}
-          >
+          <div className="p-3 rounded-lg" style={{ background: "var(--accent-dim)" }}>
             <Plus size={24} style={{ color: "var(--accent)" }} />
           </div>
           <div>
-            <p className="font-semibold">Новий рецепт</p>
-            <p className="text-sm" style={{ color: "var(--muted)" }}>
-              Додати до бази
-            </p>
+            <p className="font-semibold">New Recipe</p>
+            <p className="text-sm" style={{ color: "var(--muted)" }}>Add to your recipe book</p>
           </div>
         </Link>
 
@@ -81,42 +70,33 @@ export default async function DashboardPage() {
           className="flex items-center gap-4 p-5 rounded-xl border transition-colors hover:border-orange-500/50"
           style={{ background: "var(--surface)", borderColor: "var(--border)" }}
         >
-          <div
-            className="p-3 rounded-lg"
-            style={{ background: "var(--accent-dim)" }}
-          >
+          <div className="p-3 rounded-lg" style={{ background: "var(--accent-dim)" }}>
             <BookOpen size={24} style={{ color: "var(--accent)" }} />
           </div>
           <div>
-            <p className="font-semibold">Мої рецепти</p>
+            <p className="font-semibold">My Recipes</p>
             <p className="text-sm" style={{ color: "var(--muted)" }}>
-              {recipesCount ?? 0} рецептів
+              {recipesCount ?? 0} recipes
             </p>
           </div>
         </Link>
       </div>
 
-      {/* Recent calculations */}
       {historyItems && historyItems.length > 0 && (
         <div>
-          <h2 className="text-xl font-semibold mb-4">Останні розрахунки</h2>
+          <h2 className="text-xl font-semibold mb-4">Recent Calculations</h2>
           <div
             className="rounded-xl border divide-y"
-            style={{
-              background: "var(--surface)",
-              borderColor: "var(--border)",
-            }}
+            style={{ background: "var(--surface)", borderColor: "var(--border)" }}
           >
             {historyItems.map((item) => (
               <div key={item.id} className="flex items-center justify-between px-5 py-3">
                 <div>
                   <p className="font-medium">{item.item_name}</p>
-                  <p className="text-sm" style={{ color: "var(--muted)" }}>
-                    × {item.quantity}
-                  </p>
+                  <p className="text-sm" style={{ color: "var(--muted)" }}>× {item.quantity}</p>
                 </div>
                 <p className="text-xs" style={{ color: "var(--muted)" }}>
-                  {new Date(item.created_at).toLocaleDateString("uk-UA")}
+                  {new Date(item.created_at).toLocaleDateString("en-US")}
                 </p>
               </div>
             ))}

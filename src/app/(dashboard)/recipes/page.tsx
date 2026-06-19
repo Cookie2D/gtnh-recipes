@@ -22,14 +22,14 @@ export default async function RecipesPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">Мої рецепти</h1>
+        <h1 className="text-3xl font-bold">My Recipes</h1>
         <Link
           href="/recipes/new"
           className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold"
           style={{ background: "var(--accent)", color: "#fff" }}
         >
           <Plus size={16} />
-          Новий рецепт
+          New Recipe
         </Link>
       </div>
 
@@ -38,9 +38,9 @@ export default async function RecipesPage() {
           className="rounded-xl border p-12 text-center"
           style={{ background: "var(--surface)", borderColor: "var(--border)" }}
         >
-          <p className="text-lg font-medium mb-2">Рецептів ще немає</p>
+          <p className="text-lg font-medium mb-2">No recipes yet</p>
           <p className="text-sm mb-6" style={{ color: "var(--muted)" }}>
-            Додай перший рецепт, щоб почати розраховувати крафти
+            Add your first recipe to start calculating crafting chains
           </p>
           <Link
             href="/recipes/new"
@@ -48,7 +48,7 @@ export default async function RecipesPage() {
             style={{ background: "var(--accent)", color: "#fff" }}
           >
             <Plus size={16} />
-            Додати рецепт
+            Add Recipe
           </Link>
         </div>
       ) : (
@@ -58,14 +58,11 @@ export default async function RecipesPage() {
               key={recipe.id}
               href={`/recipes/${recipe.id}/edit`}
               className="block p-5 rounded-xl border transition-colors hover:border-orange-500/50"
-              style={{
-                background: "var(--surface)",
-                borderColor: "var(--border)",
-              }}
+              style={{ background: "var(--surface)", borderColor: "var(--border)" }}
             >
               <p className="font-semibold truncate">{recipe.name}</p>
               <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>
-                Виробляє: ×{recipe.output_quantity} · v{recipe.version}
+                Outputs ×{recipe.output_quantity} · v{recipe.version}
               </p>
             </Link>
           ))}

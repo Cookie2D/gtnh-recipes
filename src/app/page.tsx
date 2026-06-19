@@ -8,8 +8,8 @@ export default function LandingPage() {
           <span style={{ color: "var(--accent)" }}>GTNH</span> Crafter
         </h1>
         <p className="text-xl" style={{ color: "var(--muted)" }}>
-          Розраховуй ланцюжки крафтів у GregTech New Horizons.
-          Вкажи кінцевий елемент — отримай список базових ресурсів і покрокові інструкції.
+          Calculate crafting chains in GregTech New Horizons.
+          Enter a target item and get a full list of raw materials with step-by-step instructions.
         </p>
         <div className="flex gap-4 justify-center pt-4">
           <Link
@@ -17,14 +17,14 @@ export default function LandingPage() {
             className="px-6 py-3 rounded-lg font-semibold transition-colors"
             style={{ background: "var(--accent)", color: "#fff" }}
           >
-            Почати безкоштовно
+            Get started free
           </Link>
           <Link
             href="/login"
             className="px-6 py-3 rounded-lg font-semibold border transition-colors"
             style={{ borderColor: "var(--border)", color: "var(--foreground)" }}
           >
-            Увійти
+            Sign in
           </Link>
         </div>
       </div>

@@ -37,11 +37,11 @@ export default function LoginPage() {
         style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
       >
         <div>
-          <h1 className="text-2xl font-bold">Увійти</h1>
+          <h1 className="text-2xl font-bold">Sign in</h1>
           <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>
-            Немає акаунту?{" "}
+            Don&apos;t have an account?{" "}
             <Link href="/register" style={{ color: "var(--accent)" }}>
-              Зареєструватись
+              Register
             </Link>
           </p>
         </div>
@@ -65,7 +65,7 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Пароль</label>
+            <label className="block text-sm font-medium mb-1">Password</label>
             <input
               type="password"
               required
@@ -93,7 +93,7 @@ export default function LoginPage() {
             className="w-full py-2 rounded-lg font-semibold text-sm transition-opacity disabled:opacity-60"
             style={{ background: "var(--accent)", color: "#fff" }}
           >
-            {loading ? "Входимо..." : "Увійти"}
+            {loading ? "Signing in..." : "Sign in"}
           </button>
         </form>
       </div>

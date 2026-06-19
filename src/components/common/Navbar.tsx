@@ -6,9 +6,9 @@ import { createClient } from "@/lib/supabase/client";
 import { Calculator, BookOpen, LayoutDashboard, LogOut } from "lucide-react";
 
 const navItems = [
-  { href: "/dashboard", label: "Дашборд", icon: LayoutDashboard },
-  { href: "/recipes", label: "Рецепти", icon: BookOpen },
-  { href: "/calculator", label: "Калькулятор", icon: Calculator },
+  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/recipes", label: "Recipes", icon: BookOpen },
+  { href: "/calculator", label: "Calculator", icon: Calculator },
 ];
 
 export default function Navbar() {
@@ -57,7 +57,7 @@ export default function Navbar() {
         style={{ color: "var(--muted)" }}
       >
         <LogOut size={16} />
-        Вийти
+        Sign out
       </button>
     </nav>
   );
