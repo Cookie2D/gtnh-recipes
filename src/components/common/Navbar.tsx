@@ -28,7 +28,7 @@ export default function Navbar() {
       style={{ background: "var(--surface)", borderColor: "var(--border)" }}
     >
       <Link href="/dashboard" className="mr-6 font-bold text-lg shrink-0">
-        <span style={{ color: "var(--accent)" }}>GTNH</span> Crafter
+        Mod<span style={{ color: "var(--accent)" }}>Crafter</span>
       </Link>
 
       <div className="flex items-center gap-1 flex-1">

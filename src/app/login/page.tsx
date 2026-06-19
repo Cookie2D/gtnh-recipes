@@ -3,25 +3,24 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { loginAction } from "@/app/actions/auth";
 
 export default function LoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const result = await loginAction(identifier, password);
 
-    if (error) {
-      setError(error.message);
+    if (result.error) {
+      setError(result.error);
       setLoading(false);
       return;
     }
@@ -48,19 +47,22 @@ export default function LoginPage() {
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Email</label>
+            <label className="block text-sm font-medium mb-1">
+              Email or username
+            </label>
             <input
-              type="email"
+              type="text"
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
               className="w-full px-3 py-2 rounded-lg text-sm outline-none focus:ring-1"
               style={{
                 background: "var(--surface-2)",
                 border: "1px solid var(--border)",
                 color: "var(--foreground)",
               }}
-              placeholder="you@example.com"
+              placeholder="you@example.com or CreeperSlayer"
+              autoComplete="username"
             />
           </div>
 
@@ -78,6 +80,7 @@ export default function LoginPage() {
                 color: "var(--foreground)",
               }}
               placeholder="••••••••"
+              autoComplete="current-password"
             />
           </div>
 

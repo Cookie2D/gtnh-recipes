@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "GTNH Crafter",
-  description: "Crafting chain calculator for GregTech New Horizons",
+  title: "ModCrafter",
+  description: "Crafting chain calculator for modded Minecraft",
 };
 
 export default function RootLayout({

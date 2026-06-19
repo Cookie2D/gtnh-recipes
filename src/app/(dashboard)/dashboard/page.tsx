@@ -32,7 +32,7 @@ export default async function DashboardPage() {
           Welcome back, <span style={{ color: "var(--accent)" }}>{username}</span>!
         </h1>
         <p className="mt-1" style={{ color: "var(--muted)" }}>
-          Your crafting recipe hub.
+          Your modded crafting recipe hub.
         </p>
       </div>
 
