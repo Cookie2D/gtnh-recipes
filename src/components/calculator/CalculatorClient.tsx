@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Search, ChevronRight, Package, Wrench } from "lucide-react";
+import { Search, ChevronRight, Package, Wrench, ExternalLink } from "lucide-react";
 import { calculateAction } from "@/app/actions/calculator";
 import { CraftingStep } from "@/lib/calculator/engine";
 
@@ -149,7 +149,19 @@ export default function CalculatorClient({ recipeNames }: Props) {
                   <tbody>
                     {sortedRaw.map(([item, qty]) => (
                       <tr key={item} className="border-b last:border-0" style={{ borderColor: "var(--border)" }}>
-                        <td className="px-4 py-2">{item}</td>
+                        <td className="px-4 py-2">
+                          <a
+                            href={`/recipes/new?name=${encodeURIComponent(item)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title={`Create recipe for "${item}"`}
+                            className="inline-flex items-center gap-1.5 hover:underline"
+                            style={{ color: "var(--foreground)" }}
+                          >
+                            {item}
+                            <ExternalLink size={11} style={{ color: "var(--accent)", flexShrink: 0 }} />
+                          </a>
+                        </td>
                         <td className="px-4 py-2 text-right font-mono" style={{ color: "var(--accent)" }}>{qty}</td>
                       </tr>
                     ))}
@@ -193,7 +205,17 @@ export default function CalculatorClient({ recipeNames }: Props) {
                     {step.inputs.map((inp, j) => (
                       <span key={j} className="text-xs flex items-center gap-1" style={{ color: "var(--muted)" }}>
                         {j > 0 && <ChevronRight size={10} />}
-                        <span className="font-mono" style={{ color: "var(--foreground)" }}>{inp.quantity}×</span> {inp.item}
+                        <span className="font-mono" style={{ color: "var(--foreground)" }}>{inp.quantity}×</span>
+                        <a
+                          href={`/recipes/new?name=${encodeURIComponent(inp.item)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title={`Create recipe for "${inp.item}"`}
+                          className="hover:underline"
+                          style={{ color: "var(--muted)" }}
+                        >
+                          {inp.item}
+                        </a>
                       </span>
                     ))}
                   </div>

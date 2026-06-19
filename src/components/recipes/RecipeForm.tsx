@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react";
+import { Plus, Trash2, ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
 import { createRecipeAction, updateRecipeAction, deleteRecipeAction, VariantInput } from "@/app/actions/recipes";
 
 interface RecipeInput {
@@ -231,6 +231,19 @@ export default function RecipeForm({ recipeId, initialName = "", initialOutputQu
                           className="flex-1 px-3 py-2 rounded-lg text-sm outline-none"
                           style={{ background: "var(--surface-2)", border: "1px solid var(--border)", color: "var(--foreground)" }}
                         />
+                        <a
+                          href={inp.item.trim() ? `/recipes/new?name=${encodeURIComponent(inp.item.trim())}` : undefined}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title={inp.item.trim() ? `Create recipe for "${inp.item}"` : "Type an item name first"}
+                          className="p-2 rounded-lg transition-opacity"
+                          style={{
+                            color: inp.item.trim() ? "var(--accent)" : "var(--border)",
+                            pointerEvents: inp.item.trim() ? "auto" : "none",
+                          }}
+                        >
+                          <ExternalLink size={14} />
+                        </a>
                         <input
                           type="number"
                           min={1}

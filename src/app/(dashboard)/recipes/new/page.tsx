@@ -1,6 +1,12 @@
 import RecipeForm from "@/components/recipes/RecipeForm";
 
-export default function NewRecipePage() {
+interface Props {
+  searchParams: Promise<{ name?: string }>;
+}
+
+export default async function NewRecipePage({ searchParams }: Props) {
+  const { name } = await searchParams;
+
   return (
     <div className="space-y-6">
       <div>
@@ -9,7 +15,7 @@ export default function NewRecipePage() {
           Define what an item is made of and which machine produces it.
         </p>
       </div>
-      <RecipeForm />
+      <RecipeForm initialName={name ?? ""} />
     </div>
   );
 }
