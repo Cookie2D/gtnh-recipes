@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Trash2, ChevronDown, ChevronUp, ExternalLink } from "lucide-react";
+import { Plus, Trash2, ChevronDown, ChevronUp, ExternalLink, Pencil } from "lucide-react";
 import { createRecipeAction, updateRecipeAction, deleteRecipeAction, VariantInput } from "@/app/actions/recipes";
 
 interface RecipeInput {
@@ -15,16 +15,23 @@ interface Variant {
   machine: string;
 }
 
+export interface ExistingRecipe {
+  id: string;
+  name: string;
+}
+
 interface Props {
   recipeId?: string;
   initialName?: string;
   initialOutputQuantity?: number;
   initialVariants?: Variant[];
+  existingRecipes?: ExistingRecipe[];
 }
 
 const emptyVariant = (): Variant => ({ inputs: [{ item: "", quantity: 1 }], machine: "" });
 
-export default function RecipeForm({ recipeId, initialName = "", initialOutputQuantity = 1, initialVariants }: Props) {
+export default function RecipeForm({ recipeId, initialName = "", initialOutputQuantity = 1, initialVariants, existingRecipes = [] }: Props) {
+  const recipeIndex = new Map(existingRecipes.map((r) => [r.name.toLowerCase(), r.id]));
   const router = useRouter();
   const [name, setName] = useState(initialName);
   const [outputQuantity, setOutputQuantity] = useState(initialOutputQuantity);
@@ -231,19 +238,36 @@ export default function RecipeForm({ recipeId, initialName = "", initialOutputQu
                           className="flex-1 px-3 py-2 rounded-lg text-sm outline-none"
                           style={{ background: "var(--surface-2)", border: "1px solid var(--border)", color: "var(--foreground)" }}
                         />
-                        <a
-                          href={inp.item.trim() ? `/recipes/new?name=${encodeURIComponent(inp.item.trim())}` : undefined}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          title={inp.item.trim() ? `Create recipe for "${inp.item}"` : "Type an item name first"}
-                          className="p-2 rounded-lg transition-opacity"
-                          style={{
-                            color: inp.item.trim() ? "var(--accent)" : "var(--border)",
-                            pointerEvents: inp.item.trim() ? "auto" : "none",
-                          }}
-                        >
-                          <ExternalLink size={14} />
-                        </a>
+                        {(() => {
+                          const trimmed = inp.item.trim();
+                          const existingId = trimmed ? recipeIndex.get(trimmed.toLowerCase()) : undefined;
+                          const href = existingId
+                            ? `/recipes/${existingId}/edit`
+                            : trimmed
+                            ? `/recipes/new?name=${encodeURIComponent(trimmed)}`
+                            : undefined;
+                          return (
+                            <a
+                              href={href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title={
+                                !trimmed
+                                  ? "Type an item name first"
+                                  : existingId
+                                  ? `Edit recipe for "${trimmed}"`
+                                  : `Create recipe for "${trimmed}"`
+                              }
+                              className="p-2 rounded-lg transition-opacity"
+                              style={{
+                                color: trimmed ? (existingId ? "var(--success)" : "var(--accent)") : "var(--border)",
+                                pointerEvents: trimmed ? "auto" : "none",
+                              }}
+                            >
+                              {existingId ? <Pencil size={14} /> : <ExternalLink size={14} />}
+                            </a>
+                          );
+                        })()}
                         <input
                           type="number"
                           min={1}

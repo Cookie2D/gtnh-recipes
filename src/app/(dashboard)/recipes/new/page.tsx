@@ -1,3 +1,5 @@
+import { createClient } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 import RecipeForm from "@/components/recipes/RecipeForm";
 
 interface Props {
@@ -7,6 +9,15 @@ interface Props {
 export default async function NewRecipePage({ searchParams }: Props) {
   const { name } = await searchParams;
 
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/login");
+
+  const { data } = await supabase
+    .from("recipes")
+    .select("id, name")
+    .eq("user_id", user.id) as { data: { id: string; name: string }[] | null };
+
   return (
     <div className="space-y-6">
       <div>
@@ -15,7 +26,7 @@ export default async function NewRecipePage({ searchParams }: Props) {
           Define what an item is made of and which machine produces it.
         </p>
       </div>
-      <RecipeForm initialName={name ?? ""} />
+      <RecipeForm initialName={name ?? ""} existingRecipes={data ?? []} />
     </div>
   );
 }

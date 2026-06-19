@@ -1,15 +1,21 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { Search, ChevronRight, Package, Wrench, ExternalLink } from "lucide-react";
+import { Search, Package, Wrench, ExternalLink, Pencil } from "lucide-react";
 import { calculateAction } from "@/app/actions/calculator";
 import { CraftingStep } from "@/lib/calculator/engine";
 
-interface Props {
-  recipeNames: string[];
+interface ExistingRecipe {
+  id: string;
+  name: string;
 }
 
-export default function CalculatorClient({ recipeNames }: Props) {
+interface Props {
+  recipeNames: string[];
+  existingRecipes: ExistingRecipe[];
+}
+
+export default function CalculatorClient({ recipeNames, existingRecipes }: Props) {
   const [query, setQuery] = useState("");
   const [selectedItem, setSelectedItem] = useState("");
   const [quantity, setQuantity] = useState(1);
@@ -19,6 +25,8 @@ export default function CalculatorClient({ recipeNames }: Props) {
   const [rawMaterials, setRawMaterials] = useState<Record<string, number> | null>(null);
   const [craftingSteps, setCraftingSteps] = useState<CraftingStep[] | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const recipeIndex = new Map(existingRecipes.map((r) => [r.name.toLowerCase(), r.id]));
 
   const suggestions = query.trim()
     ? recipeNames.filter((n) => n.toLowerCase().includes(query.toLowerCase()))
@@ -55,11 +63,17 @@ export default function CalculatorClient({ recipeNames }: Props) {
 
   const hasResults = rawMaterials !== null && craftingSteps !== null;
 
+  const ingredientLink = (itemName: string) => {
+    const existingId = recipeIndex.get(itemName.toLowerCase());
+    return existingId
+      ? { href: `/recipes/${existingId}/edit`, isEdit: true }
+      : { href: `/recipes/new?name=${encodeURIComponent(itemName)}`, isEdit: false };
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       {/* === INPUT PANEL === */}
       <div className="space-y-4">
-        {/* Item search */}
         <div className="relative">
           <label className="block text-sm font-medium mb-1">Target item</label>
           <div className="relative">
@@ -94,7 +108,6 @@ export default function CalculatorClient({ recipeNames }: Props) {
           )}
         </div>
 
-        {/* Quantity */}
         <div>
           <label className="block text-sm font-medium mb-1">Quantity</label>
           <input
@@ -183,44 +196,82 @@ export default function CalculatorClient({ recipeNames }: Props) {
               <span className="text-xs ml-1" style={{ color: "var(--muted)" }}>bottom-up order</span>
             </h2>
             <div className="space-y-2">
-              {craftingSteps!.map((step, i) => (
-                <div
-                  key={step.item}
-                  className="rounded-xl border p-4"
-                  style={{ background: "var(--surface)", borderColor: "var(--border)" }}
-                >
-                  <div className="flex items-center gap-2 mb-2">
-                    <span
-                      className="text-xs font-mono px-1.5 py-0.5 rounded"
-                      style={{ background: "var(--accent-dim)", color: "var(--accent)" }}
-                    >
-                      #{i + 1}
-                    </span>
-                    <span className="font-medium text-sm">{step.quantity}× {step.item}</span>
-                    {step.machine && (
-                      <span className="ml-auto text-xs" style={{ color: "var(--muted)" }}>{step.machine}</span>
+              {craftingSteps!.map((step, i) => {
+                const rawInputs = step.inputs.filter((inp) => rawMaterials![inp.item] !== undefined);
+                const craftedInputs = step.inputs.filter((inp) => rawMaterials![inp.item] === undefined);
+
+                return (
+                  <div
+                    key={step.item}
+                    className="rounded-xl border p-4 space-y-3"
+                    style={{ background: "var(--surface)", borderColor: "var(--border)" }}
+                  >
+                    {/* Header */}
+                    <div className="flex items-center gap-2">
+                      <span
+                        className="text-xs font-mono px-1.5 py-0.5 rounded"
+                        style={{ background: "var(--accent-dim)", color: "var(--accent)" }}
+                      >
+                        #{i + 1}
+                      </span>
+                      <span className="font-medium text-sm">{step.quantity}× {step.item}</span>
+                      {step.machine && (
+                        <span className="ml-auto text-xs" style={{ color: "var(--muted)" }}>{step.machine}</span>
+                      )}
+                    </div>
+
+                    {/* Raw material inputs — highlighted */}
+                    {rawInputs.length > 0 && (
+                      <div className="rounded-lg px-3 py-2 space-y-1" style={{ background: "var(--accent-dim)" }}>
+                        <p className="text-xs font-medium" style={{ color: "var(--accent)" }}>Raw materials needed</p>
+                        <div className="flex flex-wrap gap-x-4 gap-y-1">
+                          {rawInputs.map((inp) => (
+                            <span key={inp.item} className="text-xs flex items-center gap-1">
+                              <span className="font-mono font-semibold" style={{ color: "var(--accent)" }}>{inp.quantity}×</span>
+                              <a
+                                href={`/recipes/new?name=${encodeURIComponent(inp.item)}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                title={`Create recipe for "${inp.item}"`}
+                                className="hover:underline"
+                                style={{ color: "var(--foreground)" }}
+                              >
+                                {inp.item}
+                              </a>
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Crafted inputs */}
+                    {craftedInputs.length > 0 && (
+                      <div className="flex flex-wrap gap-x-4 gap-y-1">
+                        {craftedInputs.map((inp) => {
+                          const { href, isEdit } = ingredientLink(inp.item);
+                          return (
+                            <span key={inp.item} className="text-xs flex items-center gap-1" style={{ color: "var(--muted)" }}>
+                              <span className="font-mono" style={{ color: "var(--foreground)" }}>{inp.quantity}×</span>
+                              <a
+                                href={href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 hover:underline"
+                                style={{ color: "var(--muted)" }}
+                              >
+                                {inp.item}
+                                {isEdit
+                                  ? <Pencil size={10} style={{ color: "var(--success)" }} />
+                                  : <ExternalLink size={10} style={{ color: "var(--accent)" }} />}
+                              </a>
+                            </span>
+                          );
+                        })}
+                      </div>
                     )}
                   </div>
-                  <div className="flex flex-wrap gap-x-3 gap-y-1">
-                    {step.inputs.map((inp, j) => (
-                      <span key={j} className="text-xs flex items-center gap-1" style={{ color: "var(--muted)" }}>
-                        {j > 0 && <ChevronRight size={10} />}
-                        <span className="font-mono" style={{ color: "var(--foreground)" }}>{inp.quantity}×</span>
-                        <a
-                          href={`/recipes/new?name=${encodeURIComponent(inp.item)}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          title={`Create recipe for "${inp.item}"`}
-                          className="hover:underline"
-                          style={{ color: "var(--muted)" }}
-                        >
-                          {inp.item}
-                        </a>
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </>
         )}

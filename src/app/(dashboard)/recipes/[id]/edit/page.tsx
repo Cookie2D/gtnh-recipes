@@ -25,12 +25,18 @@ export default async function EditRecipePage({ params }: Props) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data } = await supabase
-    .from("recipes")
-    .select("id, name, output_quantity, recipe_variants(variant_index, inputs, machines)")
-    .eq("id", id)
-    .eq("user_id", user.id)
-    .single();
+  const [{ data }, { data: allRecipes }] = await Promise.all([
+    supabase
+      .from("recipes")
+      .select("id, name, output_quantity, recipe_variants(variant_index, inputs, machines)")
+      .eq("id", id)
+      .eq("user_id", user.id)
+      .single(),
+    supabase
+      .from("recipes")
+      .select("id, name")
+      .eq("user_id", user.id),
+  ]);
 
   if (!data) notFound();
 
@@ -42,6 +48,8 @@ export default async function EditRecipePage({ params }: Props) {
       inputs: v.inputs as { item: string; quantity: number }[],
       machine: (v.machines as string[])[0] ?? "",
     }));
+
+  const existingRecipes = (allRecipes as unknown as { id: string; name: string }[] | null) ?? [];
 
   return (
     <div className="space-y-6">
@@ -56,6 +64,7 @@ export default async function EditRecipePage({ params }: Props) {
         initialName={recipe.name}
         initialOutputQuantity={recipe.output_quantity}
         initialVariants={initialVariants}
+        existingRecipes={existingRecipes}
       />
     </div>
   );
