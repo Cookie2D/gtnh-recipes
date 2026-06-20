@@ -1,7 +1,7 @@
-import Link from "next/link";
-import { Pencil, Plus } from "lucide-react";
-import { Anchor } from "@mantine/core";
 import { ExistingRecipe } from "@/types";
+import { Anchor } from "@mantine/core";
+import { Pencil, Plus } from "lucide-react";
+import Link from "next/link";
 
 interface Props {
   item: string;
@@ -9,7 +9,9 @@ interface Props {
   className?: string;
 }
 
-export function buildRecipeIndex(recipes: ExistingRecipe[]): Map<string, string> {
+export function buildRecipeIndex(
+  recipes: ExistingRecipe[],
+): Map<string, string> {
   return new Map(recipes.map((r) => [r.name.toLowerCase(), r.id]));
 }
 
@@ -28,7 +30,11 @@ export default function ItemLink({ item, recipeIndex, className }: Props) {
       href={href}
       c={existingId ? "green" : "orange"}
       className={className}
-      title={existingId ? `Edit recipe for "${trimmed}"` : `Create recipe for "${trimmed}"`}
+      title={
+        existingId
+          ? `Edit recipe for "${trimmed}"`
+          : `Create recipe for "${trimmed}"`
+      }
       style={{ display: "inline-flex", alignItems: "center", gap: 4 }}
     >
       {trimmed}

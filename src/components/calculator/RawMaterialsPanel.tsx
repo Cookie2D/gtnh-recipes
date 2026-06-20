@@ -1,19 +1,16 @@
 import { Card, Group, Stack, Table, Text, ThemeIcon } from "@mantine/core";
 import { Package } from "lucide-react";
-import ItemLink from "@/components/ui/ItemLink";
 
 interface Props {
   rawMaterials: Record<string, number>;
   quantity: number;
   itemName: string;
-  recipeIndex: Map<string, string>;
 }
 
 export default function RawMaterialsPanel({
   rawMaterials,
   quantity,
   itemName,
-  recipeIndex,
 }: Props) {
   const sorted = Object.entries(rawMaterials).sort((a, b) => b[1] - a[1]);
 

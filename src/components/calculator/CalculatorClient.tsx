@@ -1,25 +1,33 @@
 "use client";
 
-import { useState } from "react";
-import { Grid } from "@mantine/core";
 import { calculateAction } from "@/app/actions/calculator";
+import { buildRecipeIndex } from "@/components/ui/ItemLink";
 import { CraftingStep } from "@/lib/calculator/engine";
 import { ExistingRecipe } from "@/types";
-import { buildRecipeIndex } from "@/components/ui/ItemLink";
+import { Grid } from "@mantine/core";
+import { useState } from "react";
+import CraftingStepsPanel from "./CraftingStepsPanel";
 import ItemSearch from "./ItemSearch";
 import RawMaterialsPanel from "./RawMaterialsPanel";
-import CraftingStepsPanel from "./CraftingStepsPanel";
 
 interface Props {
   recipeNames: string[];
   existingRecipes: ExistingRecipe[];
 }
 
-export default function CalculatorClient({ recipeNames, existingRecipes }: Props) {
+export default function CalculatorClient({
+  recipeNames,
+  existingRecipes,
+}: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [rawMaterials, setRawMaterials] = useState<Record<string, number> | null>(null);
-  const [craftingSteps, setCraftingSteps] = useState<CraftingStep[] | null>(null);
+  const [rawMaterials, setRawMaterials] = useState<Record<
+    string,
+    number
+  > | null>(null);
+  const [craftingSteps, setCraftingSteps] = useState<CraftingStep[] | null>(
+    null,
+  );
   const [lastItem, setLastItem] = useState({ name: "", qty: 1 });
 
   const recipeIndex = buildRecipeIndex(existingRecipes);
@@ -61,7 +69,6 @@ export default function CalculatorClient({ recipeNames, existingRecipes }: Props
             rawMaterials={rawMaterials!}
             quantity={lastItem.qty}
             itemName={lastItem.name}
-            recipeIndex={recipeIndex}
           />
         </Grid.Col>
       )}
