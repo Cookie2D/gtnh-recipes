@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "PowerShell(node --version)",
-      "PowerShell(npm --version)"
+      "PowerShell(npm --version)",
+      "Bash(npx tsc *)",
+      "PowerShell(Remove-Item \"E:\\\\Projects\\\\gtnh-crafting-system\\\\src\\\\components\\\\common\\\\Navbar.tsx\" -Confirm:$false)"
     ]
   }
 }
