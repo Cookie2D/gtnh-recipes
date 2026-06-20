@@ -76,6 +76,7 @@ export default function CalculatorClient({
       {hasResults && craftingSteps!.length > 0 && (
         <Grid.Col span={{ base: 12, lg: 4 }}>
           <CraftingStepsPanel
+            key={`${lastItem.name}-${lastItem.qty}`}
             craftingSteps={craftingSteps!}
             rawMaterials={rawMaterials!}
             recipeIndex={recipeIndex}

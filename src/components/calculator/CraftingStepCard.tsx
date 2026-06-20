@@ -1,4 +1,6 @@
-import { Badge, Box, Card, Group, Stack, Text } from "@mantine/core";
+"use client";
+
+import { Badge, Box, Card, Checkbox, Group, Stack, Text } from "@mantine/core";
 import { Wrench } from "lucide-react";
 import ItemLink from "@/components/ui/ItemLink";
 import { CraftingStep } from "@/lib/calculator/engine";
@@ -8,18 +10,39 @@ interface Props {
   index: number;
   rawMaterials: Record<string, number>;
   recipeIndex: Map<string, string>;
+  done: boolean;
+  onToggle: () => void;
 }
 
-export default function CraftingStepCard({ step, index, rawMaterials, recipeIndex }: Props) {
+export default function CraftingStepCard({ step, index, rawMaterials, recipeIndex, done, onToggle }: Props) {
   const rawInputs = step.inputs.filter((inp) => rawMaterials[inp.item] !== undefined);
   const craftedInputs = step.inputs.filter((inp) => rawMaterials[inp.item] === undefined);
 
   return (
-    <Card withBorder>
+    <Card withBorder style={{ opacity: done ? 0.5 : 1, transition: "opacity 0.15s" }}>
       <Stack gap="xs">
         <Group gap="xs">
-          <Badge variant="light" color="orange" size="sm" ff="monospace">#{index + 1}</Badge>
-          <Text size="sm" fw={500}>
+          <Checkbox
+            checked={done}
+            onChange={() => onToggle()}
+            color="green"
+            size="sm"
+            aria-label={done ? "Mark as undone" : "Mark as done"}
+          />
+          <Badge
+            variant="light"
+            color={done ? "green" : "orange"}
+            size="sm"
+            ff="monospace"
+          >
+            #{index + 1}
+          </Badge>
+          <Text
+            size="sm"
+            fw={500}
+            td={done ? "line-through" : undefined}
+            c={done ? "dimmed" : undefined}
+          >
             {step.quantity}× <ItemLink item={step.item} recipeIndex={recipeIndex} />
           </Text>
           {step.machine && (
@@ -30,7 +53,7 @@ export default function CraftingStepCard({ step, index, rawMaterials, recipeInde
           )}
         </Group>
 
-        {rawInputs.length > 0 && (
+        {!done && rawInputs.length > 0 && (
           <Box
             p="xs"
             style={{
@@ -50,7 +73,7 @@ export default function CraftingStepCard({ step, index, rawMaterials, recipeInde
           </Box>
         )}
 
-        {craftedInputs.length > 0 && (
+        {!done && craftedInputs.length > 0 && (
           <Group gap="md" wrap="wrap">
             {craftedInputs.map((inp) => (
               <Group key={inp.item} gap={4}>
