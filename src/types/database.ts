@@ -107,6 +107,25 @@ export interface Database {
         };
         Relationships: [];
       };
+      user_variant_prefs: {
+        Row: {
+          user_id: string;
+          item_name: string;
+          variant_index: number;
+          updated_at: string;
+        };
+        Insert: {
+          user_id: string;
+          item_name: string;
+          variant_index: number;
+          updated_at?: string;
+        };
+        Update: {
+          variant_index?: number;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       calculation_history: {
         Row: {
           id: string;

@@ -1,6 +1,6 @@
 "use client";
 
-import { calculateAction, VariantOptions } from "@/app/actions/calculator";
+import { calculateAction, saveVariantPref, VariantOptions } from "@/app/actions/calculator";
 import { buildRecipeIndex } from "@/components/ui/ItemLink";
 import { CraftingStep } from "@/lib/calculator/engine";
 import { ExistingRecipe } from "@/types";
@@ -13,15 +13,16 @@ import RawMaterialsPanel from "./RawMaterialsPanel";
 interface Props {
   recipeNames: string[];
   existingRecipes: ExistingRecipe[];
+  initialVariantPrefs?: Record<string, number>;
 }
 
-export default function CalculatorClient({ recipeNames, existingRecipes }: Props) {
+export default function CalculatorClient({ recipeNames, existingRecipes, initialVariantPrefs = {} }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [rawMaterials, setRawMaterials] = useState<Record<string, number> | null>(null);
   const [craftingSteps, setCraftingSteps] = useState<CraftingStep[] | null>(null);
   const [variantOptions, setVariantOptions] = useState<VariantOptions>({});
-  const [variantPrefs, setVariantPrefs] = useState<Record<string, number>>({});
+  const [variantPrefs, setVariantPrefs] = useState<Record<string, number>>(initialVariantPrefs);
   const [lastItem, setLastItem] = useState({ name: "", qty: 1 });
 
   const recipeIndex = buildRecipeIndex(existingRecipes);
@@ -49,14 +50,14 @@ export default function CalculatorClient({ recipeNames, existingRecipes }: Props
   };
 
   const handleNewCalculation = (item: string, quantity: number) => {
-    setVariantPrefs({});
     setLastItem({ name: item, qty: quantity });
-    handleCalculate(item, quantity, {});
+    handleCalculate(item, quantity, variantPrefs);
   };
 
   const handleVariantChange = (itemName: string, variantIndex: number) => {
     const newPrefs = { ...variantPrefs, [itemName]: variantIndex };
     setVariantPrefs(newPrefs);
+    saveVariantPref(itemName, variantIndex); // fire-and-forget persist
     handleCalculate(lastItem.name, lastItem.qty, newPrefs);
   };
 

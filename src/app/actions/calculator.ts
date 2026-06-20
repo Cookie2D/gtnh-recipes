@@ -94,3 +94,31 @@ export async function calculateAction(
 
   return { ...result, variantOptions };
 }
+
+export async function saveVariantPref(itemName: string, variantIndex: number): Promise<void> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return;
+
+  await supabase.from("user_variant_prefs").upsert(
+    { user_id: user.id, item_name: itemName, variant_index: variantIndex, updated_at: new Date().toISOString() },
+    { onConflict: "user_id,item_name" }
+  );
+}
+
+export async function loadVariantPrefs(): Promise<Record<string, number>> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return {};
+
+  const { data } = await supabase
+    .from("user_variant_prefs")
+    .select("item_name, variant_index")
+    .eq("user_id", user.id);
+
+  const prefs: Record<string, number> = {};
+  for (const row of data ?? []) {
+    prefs[row.item_name] = row.variant_index;
+  }
+  return prefs;
+}
