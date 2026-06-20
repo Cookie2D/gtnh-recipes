@@ -11,6 +11,7 @@ interface Props {
   index: number;
   variant: Variant;
   canRemove: boolean;
+  suggestions: string[];
   recipeIndex: Map<string, string>;
   onRemove: () => void;
   onMachineChange: (value: string) => void;
@@ -21,7 +22,7 @@ interface Props {
 }
 
 export default function VariantSection({
-  index, variant, canRemove, recipeIndex,
+  index, variant, canRemove, suggestions, recipeIndex,
   onRemove, onMachineChange, onItemChange, onQuantityChange, onAddInput, onRemoveInput,
 }: Props) {
   return (
@@ -68,6 +69,7 @@ export default function VariantSection({
                   item={inp.item}
                   quantity={inp.quantity}
                   canRemove={variant.inputs.length > 1}
+                  suggestions={suggestions}
                   recipeIndex={recipeIndex}
                   onItemChange={(v) => onItemChange(ii, v)}
                   onQuantityChange={(v) => onQuantityChange(ii, v)}

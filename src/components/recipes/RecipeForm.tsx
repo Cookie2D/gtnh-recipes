@@ -17,6 +17,7 @@ interface Props {
   initialOutputQuantity?: number;
   initialVariants?: Variant[];
   existingRecipes?: ExistingRecipe[];
+  ingredientNames?: string[];
 }
 
 const emptyVariant = (): Variant => ({ inputs: [{ item: "", quantity: 1 }], machine: "" });
@@ -27,8 +28,12 @@ export default function RecipeForm({
   initialOutputQuantity = 1,
   initialVariants,
   existingRecipes = [],
+  ingredientNames = [],
 }: Props) {
   const recipeIndex = new Map(existingRecipes.map((r) => [r.name.toLowerCase(), r.id]));
+  const suggestions = Array.from(
+    new Set([...existingRecipes.map((r) => r.name), ...ingredientNames])
+  ).sort();
   const router = useRouter();
 
   const [name, setName] = useState(initialName);
@@ -159,6 +164,7 @@ export default function RecipeForm({
                 index={vi}
                 variant={variant}
                 canRemove={variants.length > 1}
+                suggestions={suggestions}
                 recipeIndex={recipeIndex}
                 onRemove={() => removeVariant(vi)}
                 onMachineChange={(v) => updateVariantMachine(vi, v)}

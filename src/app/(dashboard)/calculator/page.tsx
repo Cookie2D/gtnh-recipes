@@ -11,7 +11,7 @@ export default async function CalculatorPage() {
     .from("recipes")
     .select("id, name")
     .eq("user_id", user.id)
-    .order("name") as { data: { id: string; name: string }[] | null };
+    .order("created_at", { ascending: false }) as { data: { id: string; name: string }[] | null };
 
   const recipeList = recipes ?? [];
 

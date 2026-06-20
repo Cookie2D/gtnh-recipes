@@ -4,15 +4,22 @@ import { useState } from "react";
 import { Group, Stack, Text, ThemeIcon } from "@mantine/core";
 import { Wrench } from "lucide-react";
 import { CraftingStep } from "@/lib/calculator/engine";
+import { VariantOptions } from "@/app/actions/calculator";
 import CraftingStepCard from "./CraftingStepCard";
 
 interface Props {
   craftingSteps: CraftingStep[];
   rawMaterials: Record<string, number>;
   recipeIndex: Map<string, string>;
+  variantOptions: VariantOptions;
+  variantPrefs: Record<string, number>;
+  onVariantChange: (itemName: string, variantIndex: number) => void;
 }
 
-export default function CraftingStepsPanel({ craftingSteps, rawMaterials, recipeIndex }: Props) {
+export default function CraftingStepsPanel({
+  craftingSteps, rawMaterials, recipeIndex,
+  variantOptions, variantPrefs, onVariantChange,
+}: Props) {
   const [done, setDone] = useState<Set<string>>(new Set());
 
   const toggle = (item: string) =>
@@ -22,15 +29,7 @@ export default function CraftingStepsPanel({ craftingSteps, rawMaterials, recipe
       return next;
     });
 
-  // No-machine steps (manual crafting) first, then machine steps — stable sort
-  const sorted = [...craftingSteps].sort((a, b) => {
-    const aHas = !!a.machine;
-    const bHas = !!b.machine;
-    if (aHas === bHas) return 0;
-    return aHas ? 1 : -1;
-  });
-
-  const doneCount = sorted.filter((s) => done.has(s.item)).length;
+  const doneCount = craftingSteps.filter((s) => done.has(s.item)).length;
 
   return (
     <Stack gap="sm">
@@ -39,16 +38,16 @@ export default function CraftingStepsPanel({ craftingSteps, rawMaterials, recipe
           <Wrench size={16} />
         </ThemeIcon>
         <Text fw={600}>Crafting Steps</Text>
-        <Text size="xs" c="dimmed">no-machine first</Text>
+        <Text size="xs" c="dimmed">bottom-up order</Text>
         {doneCount > 0 && (
           <Text size="xs" c="green" ml="auto">
-            {doneCount}/{sorted.length} done
+            {doneCount}/{craftingSteps.length} done
           </Text>
         )}
       </Group>
 
       <Stack gap="xs">
-        {sorted.map((step, i) => (
+        {craftingSteps.map((step, i) => (
           <CraftingStepCard
             key={step.item}
             step={step}
@@ -57,6 +56,9 @@ export default function CraftingStepsPanel({ craftingSteps, rawMaterials, recipe
             recipeIndex={recipeIndex}
             done={done.has(step.item)}
             onToggle={() => toggle(step.item)}
+            variants={variantOptions[step.item]}
+            selectedVariant={variantPrefs[step.item]}
+            onVariantChange={(idx) => onVariantChange(step.item, idx)}
           />
         ))}
       </Stack>

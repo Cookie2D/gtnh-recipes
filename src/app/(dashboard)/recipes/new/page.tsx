@@ -6,6 +6,12 @@ interface Props {
   searchParams: Promise<{ name?: string }>;
 }
 
+type RecipeRow = {
+  id: string;
+  name: string;
+  recipe_variants: { inputs: { item: string; quantity: number }[] }[];
+};
+
 export default async function NewRecipePage({ searchParams }: Props) {
   const { name } = await searchParams;
 
@@ -15,8 +21,20 @@ export default async function NewRecipePage({ searchParams }: Props) {
 
   const { data } = await supabase
     .from("recipes")
-    .select("id, name")
-    .eq("user_id", user.id) as { data: { id: string; name: string }[] | null };
+    .select("id, name, recipe_variants(inputs)")
+    .eq("user_id", user.id) as { data: RecipeRow[] | null };
+
+  const recipes = data ?? [];
+  const existingRecipes = recipes.map((r) => ({ id: r.id, name: r.name }));
+  const ingredientNames = Array.from(
+    new Set(
+      recipes
+        .flatMap((r) => r.recipe_variants ?? [])
+        .flatMap((v) => v.inputs ?? [])
+        .map((inp) => inp.item?.trim())
+        .filter((s): s is string => !!s)
+    )
+  );
 
   return (
     <div className="space-y-6">
@@ -26,7 +44,11 @@ export default async function NewRecipePage({ searchParams }: Props) {
           Define what an item is made of and which machine produces it.
         </p>
       </div>
-      <RecipeForm initialName={name ?? ""} existingRecipes={data ?? []} />
+      <RecipeForm
+        initialName={name ?? ""}
+        existingRecipes={existingRecipes}
+        ingredientNames={ingredientNames}
+      />
     </div>
   );
 }

@@ -1,9 +1,10 @@
 "use client";
 
-import { Badge, Box, Card, Checkbox, Group, Stack, Text } from "@mantine/core";
+import { Badge, Box, Card, Checkbox, Group, SegmentedControl, Stack, Text } from "@mantine/core";
 import { Wrench } from "lucide-react";
 import ItemLink from "@/components/ui/ItemLink";
 import { CraftingStep } from "@/lib/calculator/engine";
+import { VariantOption } from "@/app/actions/calculator";
 
 interface Props {
   step: CraftingStep;
@@ -12,11 +13,18 @@ interface Props {
   recipeIndex: Map<string, string>;
   done: boolean;
   onToggle: () => void;
+  variants?: VariantOption[];
+  selectedVariant?: number;
+  onVariantChange?: (variantIndex: number) => void;
 }
 
-export default function CraftingStepCard({ step, index, rawMaterials, recipeIndex, done, onToggle }: Props) {
+export default function CraftingStepCard({
+  step, index, rawMaterials, recipeIndex, done, onToggle,
+  variants, selectedVariant, onVariantChange,
+}: Props) {
   const rawInputs = step.inputs.filter((inp) => rawMaterials[inp.item] !== undefined);
   const craftedInputs = step.inputs.filter((inp) => rawMaterials[inp.item] === undefined);
+  const showVariantPicker = variants && variants.length > 1 && onVariantChange;
 
   return (
     <Card withBorder style={{ opacity: done ? 0.5 : 1, transition: "opacity 0.15s" }}>
@@ -52,6 +60,16 @@ export default function CraftingStepCard({ step, index, rawMaterials, recipeInde
             </Group>
           )}
         </Group>
+
+        {showVariantPicker && (
+          <SegmentedControl
+            size="xs"
+            value={String(selectedVariant ?? variants[0].variantIndex)}
+            onChange={(val) => onVariantChange(Number(val))}
+            data={variants.map((v) => ({ value: String(v.variantIndex), label: v.label }))}
+            color="orange"
+          />
+        )}
 
         {!done && rawInputs.length > 0 && (
           <Box

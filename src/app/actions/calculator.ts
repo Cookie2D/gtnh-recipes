@@ -14,13 +14,26 @@ interface RecipeRow {
   }[];
 }
 
+export interface VariantOption {
+  variantIndex: number;
+  label: string;
+}
+
+export type VariantOptions = Record<string, VariantOption[]>;
+
+export interface CalculateResult extends CalculationResult {
+  error?: string;
+  variantOptions: VariantOptions;
+}
+
 export async function calculateAction(
   itemName: string,
-  quantity: number
-): Promise<CalculationResult & { error?: string }> {
+  quantity: number,
+  variantPrefs: Record<string, number> = {}
+): Promise<CalculateResult> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "Not authenticated.", rawMaterials: {}, craftingSteps: [] };
+  if (!user) return { error: "Not authenticated.", rawMaterials: {}, craftingSteps: [], variantOptions: {} };
 
   const { data: recipes, error: fetchError } = await supabase
     .from("recipes")
@@ -28,16 +41,30 @@ export async function calculateAction(
     .eq("user_id", user.id);
 
   if (fetchError || !recipes) {
-    return { error: fetchError?.message ?? "Failed to load recipes.", rawMaterials: {}, craftingSteps: [] };
+    return { error: fetchError?.message ?? "Failed to load recipes.", rawMaterials: {}, craftingSteps: [], variantOptions: {} };
   }
 
   const typedRecipes = recipes as unknown as RecipeRow[];
 
   const recipeMap: RecipeMap = {};
+  const variantOptions: VariantOptions = {};
+
   for (const r of typedRecipes) {
     const sorted = [...r.recipe_variants].sort((a, b) => a.variant_index - b.variant_index);
-    const variant = sorted[0];
-    if (!variant) continue;
+    if (sorted.length === 0) continue;
+
+    // Build available options for this recipe (used by UI to render variant selectors)
+    if (sorted.length > 1) {
+      variantOptions[r.name] = sorted.map((v) => {
+        const machines = v.machines as string[];
+        const machine = machines[0] ?? "";
+        return { variantIndex: v.variant_index, label: machine || "Manual" };
+      });
+    }
+
+    // Pick the preferred variant (default: first / lowest variant_index)
+    const preferredIndex = variantPrefs[r.name] ?? sorted[0].variant_index;
+    const variant = sorted.find((v) => v.variant_index === preferredIndex) ?? sorted[0];
 
     const inputs = variant.inputs as { item: string; quantity: number }[];
     const machines = variant.machines as string[];
@@ -53,7 +80,7 @@ export async function calculateAction(
   try {
     result = calculate(itemName, quantity, recipeMap);
   } catch (err) {
-    return { error: (err as Error).message, rawMaterials: {}, craftingSteps: [] };
+    return { error: (err as Error).message, rawMaterials: {}, craftingSteps: [], variantOptions };
   }
 
   // Save to history (non-blocking)
@@ -65,5 +92,5 @@ export async function calculateAction(
     crafting_steps: result.craftingSteps as unknown as Json,
   }).then(() => {});
 
-  return result;
+  return { ...result, variantOptions };
 }

@@ -23,69 +23,33 @@ export function calculate(
   targetQuantity: number,
   recipes: RecipeMap
 ): CalculationResult {
-  // Phase 1: accumulate total needed quantities for every item in the DAG.
-  // We do a BFS so shared sub-ingredients are summed before we recurse into them.
-  const needed = new Map<string, number>();
-
-  const queue: { item: string; qty: number }[] = [{ item: targetItem, qty: targetQuantity }];
-  const inQueue = new Set<string>();
-
-  // Cycle detection
-  const resolving = new Set<string>();
-
-  while (queue.length > 0) {
-    const { item, qty } = queue.shift()!;
-
-    needed.set(item, (needed.get(item) ?? 0) + qty);
-
+  // Phase 1: DFS to discover all items reachable from targetItem
+  const discovered = new Set<string>();
+  const stack: string[] = [targetItem];
+  while (stack.length > 0) {
+    const item = stack.pop()!;
+    if (discovered.has(item)) continue;
+    discovered.add(item);
     const recipe = recipes[item];
-    if (!recipe) continue; // raw material
-
-    if (resolving.has(item)) {
-      throw new Error(`Cyclic dependency detected at "${item}".`);
-    }
-
-    if (inQueue.has(item)) continue; // already scheduled for expansion
-    inQueue.add(item);
-
-    resolving.add(item);
-    const batches = Math.ceil(qty / recipe.outputQuantity);
-    for (const input of recipe.inputs) {
-      queue.push({ item: input.item, qty: input.quantity * batches });
-    }
-    resolving.delete(item);
-  }
-
-  // Phase 2: Now that we know total quantities, build the step list via topological order.
-  // Items with no recipe are raw materials; everything else is a crafting step.
-  // We need to emit steps bottom-up (raw first, target last).
-
-  const rawMaterials: Record<string, number> = {};
-  const stepsMap = new Map<string, CraftingStep>();
-
-  // Topological sort (Kahn's algorithm) over items that have recipes.
-  // Build adjacency: item → items that depend on it (i.e. item is an input for them).
-  const dependents = new Map<string, Set<string>>(); // item → set of items that USE item
-  const inDegree = new Map<string, number>(); // item → number of its ingredients that have recipes
-
-  for (const [item] of needed) {
-    const recipe = recipes[item];
-    if (!recipe) {
-      rawMaterials[item] = needed.get(item)!;
-      continue;
-    }
-    inDegree.set(item, 0);
-    for (const input of recipe.inputs) {
-      if (!dependents.has(input.item)) dependents.set(input.item, new Set());
-      dependents.get(input.item)!.add(item);
+    if (recipe) {
+      for (const inp of recipe.inputs) stack.push(inp.item);
     }
   }
 
-  // Count in-degrees (only edges between items that have recipes matter)
-  for (const [item] of inDegree) {
-    const recipe = recipes[item]!;
-    for (const input of recipe.inputs) {
-      if (inDegree.has(input.item)) {
+  // Phase 2: Topological sort of crafted items only (Kahn's algorithm).
+  // Produces bottom-up order: raw-material producers first, target item last.
+  const dependents = new Map<string, Set<string>>(); // item → crafted items that USE it
+  const inDegree = new Map<string, number>();         // crafted item → # of crafted inputs
+
+  for (const item of discovered) {
+    if (recipes[item]) inDegree.set(item, 0);
+  }
+
+  for (const item of inDegree.keys()) {
+    for (const inp of recipes[item]!.inputs) {
+      if (!dependents.has(inp.item)) dependents.set(inp.item, new Set());
+      dependents.get(inp.item)!.add(item);
+      if (inDegree.has(inp.item)) {
         inDegree.set(item, inDegree.get(item)! + 1);
       }
     }
@@ -96,30 +60,64 @@ export function calculate(
     if (deg === 0) topoQueue.push(item);
   }
 
-  let stepNumber = 1;
+  const bottomUp: string[] = [];
   while (topoQueue.length > 0) {
     const item = topoQueue.shift()!;
-    const recipe = recipes[item]!;
-    const totalNeeded = needed.get(item)!;
-    const batches = Math.ceil(totalNeeded / recipe.outputQuantity);
-
-    stepsMap.set(item, {
-      item,
-      quantity: totalNeeded,
-      inputs: recipe.inputs.map((inp) => ({ item: inp.item, quantity: inp.quantity * batches })),
-      machine: recipe.machine,
-    });
-
-    stepNumber++;
-
+    bottomUp.push(item);
     for (const dep of dependents.get(item) ?? []) {
-      inDegree.set(dep, inDegree.get(dep)! - 1);
-      if (inDegree.get(dep) === 0) topoQueue.push(dep);
+      const newDeg = inDegree.get(dep)! - 1;
+      inDegree.set(dep, newDeg);
+      if (newDeg === 0) topoQueue.push(dep);
     }
   }
 
-  return {
-    rawMaterials,
-    craftingSteps: Array.from(stepsMap.values()),
-  };
+  if (bottomUp.length < inDegree.size) {
+    throw new Error("Cyclic dependency detected in recipe graph.");
+  }
+
+  // Phase 3: Propagate quantities TOP-DOWN (target first, raw materials last).
+  //
+  // Processing items in reverse topological order guarantees that when we reach
+  // item X, ALL crafted items that consume X have already run and contributed their
+  // share to needed[X]. This correctly handles shared sub-items (DAG diamonds) that
+  // the old single-pass BFS could not: the BFS expanded ingredients on first encounter
+  // using only the partial qty seen so far, under-counting shared items.
+  const needed = new Map<string, number>([[targetItem, targetQuantity]]);
+
+  for (let i = bottomUp.length - 1; i >= 0; i--) {
+    const item = bottomUp[i];
+    const qty = needed.get(item) ?? 0;
+    if (qty === 0) continue;
+    const recipe = recipes[item]!;
+    const batches = Math.ceil(qty / recipe.outputQuantity);
+    for (const inp of recipe.inputs) {
+      needed.set(inp.item, (needed.get(inp.item) ?? 0) + inp.quantity * batches);
+    }
+  }
+
+  // Phase 4: Build output using the correct accumulated quantities.
+  const rawMaterials: Record<string, number> = {};
+  for (const item of discovered) {
+    if (!recipes[item]) {
+      const qty = needed.get(item) ?? 0;
+      if (qty > 0) rawMaterials[item] = qty;
+    }
+  }
+
+  const craftingSteps: CraftingStep[] = bottomUp.map((item) => {
+    const recipe = recipes[item]!;
+    const totalNeeded = needed.get(item) ?? 0;
+    const batches = Math.ceil(totalNeeded / recipe.outputQuantity);
+    return {
+      item,
+      quantity: totalNeeded,
+      inputs: recipe.inputs.map((inp) => ({
+        item: inp.item,
+        quantity: inp.quantity * batches,
+      })),
+      machine: recipe.machine,
+    };
+  });
+
+  return { rawMaterials, craftingSteps };
 }

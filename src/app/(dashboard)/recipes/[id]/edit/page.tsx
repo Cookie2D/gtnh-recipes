@@ -14,6 +14,12 @@ interface RecipeRow {
   }[];
 }
 
+type AllRecipeRow = {
+  id: string;
+  name: string;
+  recipe_variants: { inputs: { item: string; quantity: number }[] }[];
+};
+
 interface Props {
   params: Promise<{ id: string }>;
 }
@@ -25,7 +31,7 @@ export default async function EditRecipePage({ params }: Props) {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const [{ data }, { data: allRecipes }] = await Promise.all([
+  const [{ data }, { data: allRecipesRaw }] = await Promise.all([
     supabase
       .from("recipes")
       .select("id, name, output_quantity, recipe_variants(variant_index, inputs, machines)")
@@ -34,13 +40,14 @@ export default async function EditRecipePage({ params }: Props) {
       .single(),
     supabase
       .from("recipes")
-      .select("id, name")
+      .select("id, name, recipe_variants(inputs)")
       .eq("user_id", user.id),
   ]);
 
   if (!data) notFound();
 
   const recipe = data as unknown as RecipeRow;
+  const allRecipes = (allRecipesRaw as unknown as AllRecipeRow[] | null) ?? [];
 
   const initialVariants = recipe.recipe_variants
     .sort((a, b) => a.variant_index - b.variant_index)
@@ -49,7 +56,16 @@ export default async function EditRecipePage({ params }: Props) {
       machine: (v.machines as string[])[0] ?? "",
     }));
 
-  const existingRecipes = (allRecipes as unknown as { id: string; name: string }[] | null) ?? [];
+  const existingRecipes = allRecipes.map((r) => ({ id: r.id, name: r.name }));
+  const ingredientNames = Array.from(
+    new Set(
+      allRecipes
+        .flatMap((r) => r.recipe_variants ?? [])
+        .flatMap((v) => v.inputs ?? [])
+        .map((inp) => inp.item?.trim())
+        .filter((s): s is string => !!s)
+    )
+  );
 
   return (
     <div className="space-y-6">
@@ -65,6 +81,7 @@ export default async function EditRecipePage({ params }: Props) {
         initialOutputQuantity={recipe.output_quantity}
         initialVariants={initialVariants}
         existingRecipes={existingRecipes}
+        ingredientNames={ingredientNames}
       />
     </div>
   );

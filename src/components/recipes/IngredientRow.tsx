@@ -1,6 +1,6 @@
 "use client";
 
-import { ActionIcon, Anchor, Box, Group, NumberInput, TextInput } from "@mantine/core";
+import { ActionIcon, Anchor, Autocomplete, Box, Group, NumberInput } from "@mantine/core";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
 
@@ -8,13 +8,14 @@ interface Props {
   item: string;
   quantity: number;
   canRemove: boolean;
+  suggestions: string[];
   recipeIndex: Map<string, string>;
   onItemChange: (value: string) => void;
   onQuantityChange: (value: number) => void;
   onRemove: () => void;
 }
 
-export default function IngredientRow({ item, quantity, canRemove, recipeIndex, onItemChange, onQuantityChange, onRemove }: Props) {
+export default function IngredientRow({ item, quantity, canRemove, suggestions, recipeIndex, onItemChange, onQuantityChange, onRemove }: Props) {
   const trimmed = item.trim();
   const existingId = trimmed ? recipeIndex.get(trimmed.toLowerCase()) : undefined;
   const linkHref = existingId
@@ -60,12 +61,14 @@ export default function IngredientRow({ item, quantity, canRemove, recipeIndex, 
 
   return (
     <Group gap="xs" wrap="nowrap">
-      <TextInput
+      <Autocomplete
         flex={1}
         value={item}
-        onChange={(e) => onItemChange(e.currentTarget.value)}
+        onChange={onItemChange}
+        data={suggestions}
         placeholder="Item name"
         size="sm"
+        limit={6}
       />
 
       {recipeIcon}
