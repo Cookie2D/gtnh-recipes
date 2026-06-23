@@ -42,22 +42,36 @@ export default function RawMaterialsPanel({
                 </Table.Th>
                 <Table.Th ta="right">
                   <Text size="xs" c="dimmed" fw={500}>
+                    Stacks
+                  </Text>
+                </Table.Th>
+                <Table.Th ta="right">
+                  <Text size="xs" c="dimmed" fw={500}>
                     Qty
                   </Text>
                 </Table.Th>
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>
-              {sorted.map(([item, qty]) => (
-                <Table.Tr key={item}>
-                  <Table.Td>{item.trim()}</Table.Td>
-                  <Table.Td ta="right">
-                    <Text size="sm" ff="monospace" c="orange">
-                      {qty}
-                    </Text>
-                  </Table.Td>
-                </Table.Tr>
-              ))}
+              {sorted.map(([item, qty]) => {
+                const stacks = Math.floor(qty / 64);
+                const remainder = qty % 64;
+                return (
+                  <Table.Tr key={item}>
+                    <Table.Td>{item.trim()}</Table.Td>
+                    <Table.Td ta="right">
+                      <Text size="sm" ff="monospace" c="dimmed">
+                        {stacks > 0 ? `${stacks} × 64${remainder > 0 ? ` + ${remainder}` : ""}` : "—"}
+                      </Text>
+                    </Table.Td>
+                    <Table.Td ta="right">
+                      <Text size="sm" ff="monospace" c="orange">
+                        {qty}
+                      </Text>
+                    </Table.Td>
+                  </Table.Tr>
+                );
+              })}
             </Table.Tbody>
           </Table>
         )}
