@@ -1,0 +1,252 @@
+{
+  ".claude/settings.json": {
+    "mtime": 1782202103.2364154,
+    "ast_hash": "7bf81dca0376bde3a32244b82bc7cbc0",
+    "semantic_hash": ""
+  },
+  ".claude/settings.local.json": {
+    "mtime": 1781891246.6957014,
+    "ast_hash": "a25452aa1bdf4c45f1828a66d5f04ae0",
+    "semantic_hash": ""
+  },
+  "eslint.config.mjs": {
+    "mtime": 1781864766.7985404,
+    "ast_hash": "dfa1f5f6a7037bf39dc510f30b180002",
+    "semantic_hash": ""
+  },
+  "next.config.ts": {
+    "mtime": 1781864766.9198306,
+    "ast_hash": "9b77af189a21a7a64e4bd7a426f64176",
+    "semantic_hash": ""
+  },
+  "package.json": {
+    "mtime": 1781889442.1384878,
+    "ast_hash": "996c3f9433428509cdd0feac1151eca1",
+    "semantic_hash": ""
+  },
+  "postcss.config.mjs": {
+    "mtime": 1781889552.867124,
+    "ast_hash": "75c0214b9c8f566ddd35c04235e2cfc3",
+    "semantic_hash": ""
+  },
+  "src/app/(dashboard)/calculator/page.tsx": {
+    "mtime": 1781948564.3901992,
+    "ast_hash": "4df09e603d240ee8aef63b5f17120d7a",
+    "semantic_hash": ""
+  },
+  "src/app/(dashboard)/dashboard/page.tsx": {
+    "mtime": 1781867141.717035,
+    "ast_hash": "42c662fd66945f99a6eb47dc530ad616",
+    "semantic_hash": ""
+  },
+  "src/app/(dashboard)/layout.tsx": {
+    "mtime": 1781890455.5522208,
+    "ast_hash": "8405a231274ec54d88ad8c0c8f0bc812",
+    "semantic_hash": ""
+  },
+  "src/app/(dashboard)/recipes/[id]/edit/page.tsx": {
+    "mtime": 1781938121.9197547,
+    "ast_hash": "67799299b4f6f4040926154f72f123fb",
+    "semantic_hash": ""
+  },
+  "src/app/(dashboard)/recipes/new/page.tsx": {
+    "mtime": 1781938110.892808,
+    "ast_hash": "bb3f784d3cd5cacd817c6d4fea119ded",
+    "semantic_hash": ""
+  },
+  "src/app/(dashboard)/recipes/page.tsx": {
+    "mtime": 1781865593.2646208,
+    "ast_hash": "a64b30273018e5e7bd4ba212e9ac95dc",
+    "semantic_hash": ""
+  },
+  "src/app/actions/auth.ts": {
+    "mtime": 1781868316.5427861,
+    "ast_hash": "8a8813e9c6fa49bd6901c6851aa13de2",
+    "semantic_hash": ""
+  },
+  "src/app/actions/calculator.ts": {
+    "mtime": 1781948151.8296213,
+    "ast_hash": "410dae37c8918c732d20803276eb8447",
+    "semantic_hash": ""
+  },
+  "src/app/actions/recipes.ts": {
+    "mtime": 1781871592.857172,
+    "ast_hash": "f0889f1fd5e9a781ee2d9a33f073cdc8",
+    "semantic_hash": ""
+  },
+  "src/app/auth/callback/route.ts": {
+    "mtime": 1781865191.2476518,
+    "ast_hash": "a733d02904b64a4ce062f0120919b702",
+    "semantic_hash": ""
+  },
+  "src/app/layout.tsx": {
+    "mtime": 1781936603.2935596,
+    "ast_hash": "ba924e1c09eb0164278e23a74be0dfaa",
+    "semantic_hash": ""
+  },
+  "src/app/login/page.tsx": {
+    "mtime": 1781867115.8946385,
+    "ast_hash": "0f7f86b806eaf05a2a5b4413a2b33186",
+    "semantic_hash": ""
+  },
+  "src/app/page.tsx": {
+    "mtime": 1781867131.6977148,
+    "ast_hash": "2a0bfdb6fd1f8618d1bbd689686cfd46",
+    "semantic_hash": ""
+  },
+  "src/app/register/page.tsx": {
+    "mtime": 1781867098.439485,
+    "ast_hash": "05f8ff8cfdabd77ef84264f012d323a2",
+    "semantic_hash": ""
+  },
+  "src/components/calculator/CalculatorClient.tsx": {
+    "mtime": 1781948194.5110705,
+    "ast_hash": "bdff1c3ba0583fd8e1127d3fc2da33ef",
+    "semantic_hash": ""
+  },
+  "src/components/calculator/CraftingStepCard.tsx": {
+    "mtime": 1781944533.6898384,
+    "ast_hash": "955ee4d96132f75f443cb13a05a1eb3c",
+    "semantic_hash": ""
+  },
+  "src/components/calculator/CraftingStepsPanel.tsx": {
+    "mtime": 1781944543.7376,
+    "ast_hash": "591f1fc44f1c900f606568ea368db232",
+    "semantic_hash": ""
+  },
+  "src/components/calculator/ItemSearch.tsx": {
+    "mtime": 1781938599.1145437,
+    "ast_hash": "2e953873994894f88ec7ad03e3457df6",
+    "semantic_hash": ""
+  },
+  "src/components/calculator/RawMaterialsPanel.tsx": {
+    "mtime": 1781937664.7148447,
+    "ast_hash": "067b04325261db34491ece71a0eb63b2",
+    "semantic_hash": ""
+  },
+  "src/components/layout/Navbar.tsx": {
+    "mtime": 1781890413.1700666,
+    "ast_hash": "cf5a90053e10c56def3c9cb850b5e432",
+    "semantic_hash": ""
+  },
+  "src/components/providers/AppProviders.tsx": {
+    "mtime": 1781889562.776128,
+    "ast_hash": "246d49d86f3a9dd233b5a11399663c28",
+    "semantic_hash": ""
+  },
+  "src/components/recipes/IngredientRow.tsx": {
+    "mtime": 1781937869.243324,
+    "ast_hash": "cea54bae2f76f0b6d91a83168a4d7f16",
+    "semantic_hash": ""
+  },
+  "src/components/recipes/RecipeForm.tsx": {
+    "mtime": 1781938100.7632842,
+    "ast_hash": "15d703a122ad065a1ff3fda2a4c957a0",
+    "semantic_hash": ""
+  },
+  "src/components/recipes/VariantSection.tsx": {
+    "mtime": 1781937883.0297346,
+    "ast_hash": "0aa2f8525c0e8d4e319a6fddb069b353",
+    "semantic_hash": ""
+  },
+  "src/components/ui/ItemLink.tsx": {
+    "mtime": 1781937661.4653983,
+    "ast_hash": "ed0607089fba1d83610b4db4287fef4d",
+    "semantic_hash": ""
+  },
+  "src/lib/calculator/engine.ts": {
+    "mtime": 1781940923.606267,
+    "ast_hash": "673f9305e5e7c12e71488605123886d8",
+    "semantic_hash": ""
+  },
+  "src/lib/supabase/admin.ts": {
+    "mtime": 1781865786.0855346,
+    "ast_hash": "e8b6805fcd863ca62a563e5ab5f5626c",
+    "semantic_hash": ""
+  },
+  "src/lib/supabase/client.ts": {
+    "mtime": 1781865775.9655232,
+    "ast_hash": "a8291070f6cc1d75f43bcc494be0c4ef",
+    "semantic_hash": ""
+  },
+  "src/lib/supabase/server.ts": {
+    "mtime": 1781865778.773054,
+    "ast_hash": "f666768e230916842cbf811d8b0e7465",
+    "semantic_hash": ""
+  },
+  "src/lib/theme.ts": {
+    "mtime": 1781889558.293369,
+    "ast_hash": "a5baa63c10488680c8d95690ace2a09e",
+    "semantic_hash": ""
+  },
+  "src/proxy.ts": {
+    "mtime": 1781865781.9361649,
+    "ast_hash": "190d301e4c65f3d28b23b1b1a4917783",
+    "semantic_hash": ""
+  },
+  "src/types/database.ts": {
+    "mtime": 1781948133.486661,
+    "ast_hash": "ac51bde543ec337d416845170ac8cc01",
+    "semantic_hash": ""
+  },
+  "src/types/index.ts": {
+    "mtime": 1781889580.096842,
+    "ast_hash": "f4366ef8e761bcd47de3b4555b54ac17",
+    "semantic_hash": ""
+  },
+  "supabase/migrations/20240101000000_init.sql": {
+    "mtime": 1781865231.5294757,
+    "ast_hash": "ba753cdd6a8dd857535fe6e8613d3bf2",
+    "semantic_hash": ""
+  },
+  "supabase/migrations/20240102000000_variant_prefs.sql": {
+    "mtime": 1781948128.6114864,
+    "ast_hash": "6129a521e4d54158b95067f6ee204949",
+    "semantic_hash": ""
+  },
+  "tsconfig.json": {
+    "mtime": 1781864767.412915,
+    "ast_hash": "ee17fd1c97c735e9f3564e3f5251f125",
+    "semantic_hash": ""
+  },
+  "AGENTS.md": {
+    "mtime": 1781864876.1298578,
+    "ast_hash": "9e09241799026ac05be315a2f0b50055",
+    "semantic_hash": ""
+  },
+  "CLAUDE.md": {
+    "mtime": 1782202103.2344077,
+    "ast_hash": "b0517ee048d45b5cd5463430230eb52f",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1781864766.7714655,
+    "ast_hash": "f15aaa42d5d299d091b1171097ea56ad",
+    "semantic_hash": ""
+  },
+  "public/file.svg": {
+    "mtime": 1781864766.8375976,
+    "ast_hash": "d09f95206c3fa0bb9bd9fefabfd0ea71",
+    "semantic_hash": ""
+  },
+  "public/globe.svg": {
+    "mtime": 1781864766.8531098,
+    "ast_hash": "2aaafa6a49b6563925fe440891e32717",
+    "semantic_hash": ""
+  },
+  "public/next.svg": {
+    "mtime": 1781864766.8656461,
+    "ast_hash": "8e061864f388b47f33a1c3780831193e",
+    "semantic_hash": ""
+  },
+  "public/vercel.svg": {
+    "mtime": 1781864766.8771653,
+    "ast_hash": "c0af2f507b369b085b35ef4bbe3bcf1e",
+    "semantic_hash": ""
+  },
+  "public/window.svg": {
+    "mtime": 1781864766.8866763,
+    "ast_hash": "a2760511c65806022ad20adf74370ff3",
+    "semantic_hash": ""
+  }
+}
