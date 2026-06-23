@@ -1,32 +1,13 @@
-import { createClient } from "@/lib/supabase/server";
+import { requireUserId } from "@/lib/data/auth";
+import { getRecipeList } from "@/lib/data/recipes";
 import { NEON } from "@/lib/theme";
 import { Box, Group, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { Plus } from "lucide-react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 export default async function RecipesPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-
-  const { data: recipes } = (await supabase
-    .from("recipes")
-    .select("id, name, output_quantity, version, created_at")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false })) as {
-    data:
-      | {
-          id: string;
-          name: string;
-          output_quantity: number;
-          version: string;
-          created_at: string;
-        }[]
-      | null;
-  };
+  const userId = await requireUserId();
+  const recipes = await getRecipeList(userId);
 
   return (
     <Stack gap="xl">
@@ -64,7 +45,7 @@ export default async function RecipesPage() {
         </Link>
       </Group>
 
-      {!recipes || recipes.length === 0 ? (
+      {recipes.length === 0 ? (
         <Box
           style={{
             borderRadius: 12,

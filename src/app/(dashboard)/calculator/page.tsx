@@ -1,32 +1,16 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
 import { Stack, Title, Text, Badge } from "@mantine/core";
 import CalculatorClient from "@/components/calculator/CalculatorClient";
+import { requireUserId } from "@/lib/data/auth";
+import { getRecipeSummaries } from "@/lib/data/recipes";
+import { getVariantPrefs } from "@/lib/data/calculator";
 import { NEON, NEON_BORDER, NEON_DIM } from "@/lib/theme";
 
 export default async function CalculatorPage() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/login");
-
-  const [recipesResult, prefsResult] = await Promise.all([
-    supabase
-      .from("recipes")
-      .select("id, name")
-      .eq("user_id", user.id)
-      .order("created_at", { ascending: false }),
-    supabase
-      .from("user_variant_prefs")
-      .select("item_name, variant_index")
-      .eq("user_id", user.id),
+  const userId = await requireUserId();
+  const [recipeList, initialVariantPrefs] = await Promise.all([
+    getRecipeSummaries(userId),
+    getVariantPrefs(userId),
   ]);
-
-  const recipeList = (recipesResult.data as { id: string; name: string }[] | null) ?? [];
-
-  const initialVariantPrefs: Record<string, number> = {};
-  for (const row of prefsResult.data ?? []) {
-    initialVariantPrefs[row.item_name] = row.variant_index;
-  }
 
   return (
     <Stack gap="xl">
