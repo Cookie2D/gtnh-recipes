@@ -4,6 +4,19 @@
   --success: #22c55e;
 }
 
+.neon-card {
+  display: block;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: #141414;
+  text-decoration: none;
+  transition: border-color 0.15s;
+}
+
+.neon-card:hover {
+  border-color: rgba(74, 222, 128, 0.25);
+}
+
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: var(--mantine-color-dark-7); }
 ::-webkit-scrollbar-thumb { background: var(--mantine-color-dark-4); border-radius: 3px; }

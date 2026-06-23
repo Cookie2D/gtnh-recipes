@@ -1,7 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect, notFound } from "next/navigation";
+import { Stack, Title, Text } from "@mantine/core";
 import RecipeForm from "@/components/recipes/RecipeForm";
 import { Json } from "@/types/database";
+import { NEON } from "@/lib/theme";
 
 interface RecipeRow {
   id: string;
@@ -68,12 +70,14 @@ export default async function EditRecipePage({ params }: Props) {
   );
 
   return (
-    <div className="space-y-6">
+    <Stack gap="xl">
       <div>
-        <h1 className="text-3xl font-bold">Edit Recipe</h1>
-        <p className="mt-1 text-sm" style={{ color: "var(--muted)" }}>
-          {recipe.name}
-        </p>
+        <Title order={1} ff="var(--font-geist-mono)" fw={900} fz={28} style={{ color: "#f0fdf4" }}>
+          Edit <span style={{ color: NEON }}>{recipe.name}</span>
+        </Title>
+        <Text fz="sm" mt={4} style={{ color: "#6b7280" }}>
+          Update ingredients, machine, or output quantity.
+        </Text>
       </div>
       <RecipeForm
         recipeId={recipe.id}
@@ -83,6 +87,6 @@ export default async function EditRecipePage({ params }: Props) {
         existingRecipes={existingRecipes}
         ingredientNames={ingredientNames}
       />
-    </div>
+    </Stack>
   );
 }

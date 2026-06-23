@@ -1,14 +1,19 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import { Stack, Title, Text, SimpleGrid, Box } from "@mantine/core";
 import { Calculator, BookOpen, Plus } from "lucide-react";
+import { NEON, NEON_BORDER, NEON_DIM } from "@/lib/theme";
+
+const quickLinks = [
+  { href: "/calculator", label: "Calculator", sub: "Calculate a crafting chain", icon: Calculator },
+  { href: "/recipes/new", label: "New Recipe", sub: "Add to your recipe book", icon: Plus },
+  { href: "/recipes", label: "My Recipes", icon: BookOpen },
+];
 
 export default async function DashboardPage() {
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
+  const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
   const { count: recipesCount } = await supabase
@@ -26,83 +31,48 @@ export default async function DashboardPage() {
   const username = user.user_metadata?.username ?? user.email?.split("@")[0];
 
   return (
-    <div className="space-y-8">
+    <Stack gap="xl">
       <div>
-        <h1 className="text-3xl font-bold">
-          Welcome back, <span style={{ color: "var(--accent)" }}>{username}</span>!
-        </h1>
-        <p className="mt-1" style={{ color: "var(--muted)" }}>
+        <Title order={1} ff="var(--font-geist-mono)" fw={900} fz={28} style={{ color: "#f0fdf4" }}>
+          Welcome back, <span style={{ color: NEON }}>{username}</span>
+        </Title>
+        <Text fz="sm" mt={4} style={{ color: "#6b7280" }}>
           Your modded crafting recipe hub.
-        </p>
+        </Text>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        <Link
-          href="/calculator"
-          className="flex items-center gap-4 p-5 rounded-xl border transition-colors hover:border-orange-500/50"
-          style={{ background: "var(--surface)", borderColor: "var(--border)" }}
-        >
-          <div className="p-3 rounded-lg" style={{ background: "var(--accent-dim)" }}>
-            <Calculator size={24} style={{ color: "var(--accent)" }} />
-          </div>
-          <div>
-            <p className="font-semibold">Calculator</p>
-            <p className="text-sm" style={{ color: "var(--muted)" }}>Calculate a crafting chain</p>
-          </div>
-        </Link>
-
-        <Link
-          href="/recipes/new"
-          className="flex items-center gap-4 p-5 rounded-xl border transition-colors hover:border-orange-500/50"
-          style={{ background: "var(--surface)", borderColor: "var(--border)" }}
-        >
-          <div className="p-3 rounded-lg" style={{ background: "var(--accent-dim)" }}>
-            <Plus size={24} style={{ color: "var(--accent)" }} />
-          </div>
-          <div>
-            <p className="font-semibold">New Recipe</p>
-            <p className="text-sm" style={{ color: "var(--muted)" }}>Add to your recipe book</p>
-          </div>
-        </Link>
-
-        <Link
-          href="/recipes"
-          className="flex items-center gap-4 p-5 rounded-xl border transition-colors hover:border-orange-500/50"
-          style={{ background: "var(--surface)", borderColor: "var(--border)" }}
-        >
-          <div className="p-3 rounded-lg" style={{ background: "var(--accent-dim)" }}>
-            <BookOpen size={24} style={{ color: "var(--accent)" }} />
-          </div>
-          <div>
-            <p className="font-semibold">My Recipes</p>
-            <p className="text-sm" style={{ color: "var(--muted)" }}>
-              {recipesCount ?? 0} recipes
-            </p>
-          </div>
-        </Link>
-      </div>
-
-      {historyItems && historyItems.length > 0 && (
-        <div>
-          <h2 className="text-xl font-semibold mb-4">Recent Calculations</h2>
-          <div
-            className="rounded-xl border divide-y"
-            style={{ background: "var(--surface)", borderColor: "var(--border)" }}
+      <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="sm">
+        {quickLinks.map(({ href, label, sub, icon: Icon }) => (
+          <Link
+            key={href}
+            href={href}
+            className="neon-card"
+            style={{ display: "flex", alignItems: "center", gap: 16, padding: "20px" }}
           >
-            {historyItems.map((item) => (
-              <div key={item.id} className="flex items-center justify-between px-5 py-3">
-                <div>
-                  <p className="font-medium">{item.item_name}</p>
-                  <p className="text-sm" style={{ color: "var(--muted)" }}>× {item.quantity}</p>
-                </div>
-                <p className="text-xs" style={{ color: "var(--muted)" }}>
-                  {new Date(item.created_at).toLocaleDateString("en-US")}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
+            <Box
+              style={{
+                padding: 10,
+                borderRadius: 8,
+                background: NEON_DIM,
+                border: `1px solid ${NEON_BORDER}`,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+              }}
+            >
+              <Icon size={20} color={NEON} />
+            </Box>
+            <div>
+              <Text fw={600} fz="sm" style={{ color: "#f0fdf4" }}>{label}</Text>
+              <Text fz="xs" style={{ color: "#6b7280" }}>
+                {href === "/recipes" ? `${recipesCount ?? 0} recipes` : sub}
+              </Text>
+            </div>
+          </Link>
+        ))}
+      </SimpleGrid>
+
+    </Stack>
   );
 }

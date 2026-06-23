@@ -1,73 +1,140 @@
 import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
-import Link from "next/link";
+import { NEON } from "@/lib/theme";
+import { Box, Group, SimpleGrid, Stack, Text, Title } from "@mantine/core";
 import { Plus } from "lucide-react";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 
 export default async function RecipesPage() {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
   if (!user) redirect("/login");
 
-  const { data: recipes } = await supabase
+  const { data: recipes } = (await supabase
     .from("recipes")
     .select("id, name, output_quantity, version, created_at")
     .eq("user_id", user.id)
-    .order("created_at", { ascending: false }) as {
-      data: { id: string; name: string; output_quantity: number; version: string; created_at: string }[] | null;
-    };
+    .order("created_at", { ascending: false })) as {
+    data:
+      | {
+          id: string;
+          name: string;
+          output_quantity: number;
+          version: string;
+          created_at: string;
+        }[]
+      | null;
+  };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold">My Recipes</h1>
+    <Stack gap="xl">
+      <Group justify="space-between" align="center">
+        <Title
+          order={1}
+          ff="var(--font-geist-mono)"
+          fw={900}
+          fz={28}
+          style={{ color: "#f0fdf4" }}
+        >
+          My Recipes
+        </Title>
         <Link
           href="/recipes/new"
-          className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold"
-          style={{ background: "var(--accent)", color: "#fff" }}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            padding: "8px 18px",
+            borderRadius: 8,
+            fontFamily: "var(--font-geist-mono)",
+            fontWeight: 700,
+            fontSize: 13,
+            textTransform: "uppercase",
+            letterSpacing: "0.06em",
+            textDecoration: "none",
+            background: NEON,
+            color: "#0a0a0a",
+            boxShadow: "0 0 16px rgba(74,222,128,0.3)",
+          }}
         >
-          <Plus size={16} />
+          <Plus size={15} />
           New Recipe
         </Link>
-      </div>
+      </Group>
 
       {!recipes || recipes.length === 0 ? (
-        <div
-          className="rounded-xl border p-12 text-center"
-          style={{ background: "var(--surface)", borderColor: "var(--border)" }}
+        <Box
+          style={{
+            borderRadius: 12,
+            border: `1px solid rgba(255,255,255,0.07)`,
+            background: "#141414",
+            padding: "64px 24px",
+            textAlign: "center",
+          }}
         >
-          <p className="text-lg font-medium mb-2">No recipes yet</p>
-          <p className="text-sm mb-6" style={{ color: "var(--muted)" }}>
+          <Text fw={600} fz="lg" mb={6} style={{ color: "#f0fdf4" }}>
+            No recipes yet
+          </Text>
+          <Text fz="sm" mb="lg" style={{ color: "#6b7280" }}>
             Add your first recipe to start calculating crafting chains
-          </p>
+          </Text>
           <Link
             href="/recipes/new"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold"
-            style={{ background: "var(--accent)", color: "#fff" }}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              padding: "8px 18px",
+              borderRadius: 8,
+              fontFamily: "var(--font-geist-mono)",
+              fontWeight: 700,
+              fontSize: 13,
+              textTransform: "uppercase",
+              letterSpacing: "0.06em",
+              textDecoration: "none",
+              background: NEON,
+              color: "#0a0a0a",
+            }}
           >
-            <Plus size={16} />
+            <Plus size={15} />
             Add Recipe
           </Link>
-        </div>
+        </Box>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="sm">
           {recipes.map((recipe) => (
             <Link
               key={recipe.id}
               href={`/recipes/${recipe.id}/edit`}
-              className="block p-5 rounded-xl border transition-colors hover:border-orange-500/50"
-              style={{ background: "var(--surface)", borderColor: "var(--border)" }}
+              className="neon-card"
+              style={{ padding: "20px" }}
             >
-              <p className="font-semibold truncate">{recipe.name}</p>
-              <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>
+              <Text
+                fw={600}
+                fz="sm"
+                style={{
+                  color: "#f0fdf4",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {recipe.name}
+              </Text>
+              <Text
+                fz="xs"
+                mt={4}
+                ff="var(--font-geist-mono)"
+                style={{ color: "#6b7280" }}
+              >
                 Outputs ×{recipe.output_quantity} · v{recipe.version}
-              </p>
+              </Text>
             </Link>
           ))}
-        </div>
+        </SimpleGrid>
       )}
-    </div>
+    </Stack>
   );
 }

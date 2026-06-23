@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { Stack, Title, Text, Badge } from "@mantine/core";
 import CalculatorClient from "@/components/calculator/CalculatorClient";
+import { NEON, NEON_BORDER, NEON_DIM } from "@/lib/theme";
 
 export default async function CalculatorPage() {
   const supabase = await createClient();
@@ -27,13 +29,35 @@ export default async function CalculatorPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold">Crafting Calculator</h1>
+    <Stack gap="xl">
+      <div>
+        <Badge
+          variant="outline"
+          mb="sm"
+          style={{
+            color: NEON,
+            background: NEON_DIM,
+            borderColor: NEON_BORDER,
+            fontFamily: "var(--font-geist-mono)",
+            letterSpacing: "0.12em",
+            textTransform: "uppercase",
+            fontSize: 11,
+          }}
+        >
+          Chain Resolver
+        </Badge>
+        <Title order={1} ff="var(--font-geist-mono)" fw={900} fz={28} style={{ color: "#f0fdf4" }}>
+          Crafting <span style={{ color: NEON }}>Calculator</span>
+        </Title>
+        <Text fz="sm" mt={4} style={{ color: "#6b7280" }}>
+          Enter a target item and quantity to resolve the full crafting chain.
+        </Text>
+      </div>
       <CalculatorClient
         recipeNames={recipeList.map((r) => r.name)}
         existingRecipes={recipeList}
         initialVariantPrefs={initialVariantPrefs}
       />
-    </div>
+    </Stack>
   );
 }

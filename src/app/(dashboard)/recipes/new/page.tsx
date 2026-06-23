@@ -1,6 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { Stack, Title, Text, Badge } from "@mantine/core";
 import RecipeForm from "@/components/recipes/RecipeForm";
+import { NEON, NEON_BORDER, NEON_DIM } from "@/lib/theme";
 
 interface Props {
   searchParams: Promise<{ name?: string }>;
@@ -37,18 +39,35 @@ export default async function NewRecipePage({ searchParams }: Props) {
   );
 
   return (
-    <div className="space-y-6">
+    <Stack gap="xl">
       <div>
-        <h1 className="text-3xl font-bold">New Recipe</h1>
-        <p className="mt-1 text-sm" style={{ color: "var(--muted)" }}>
+        <Badge
+          variant="outline"
+          mb="sm"
+          style={{
+            color: NEON,
+            background: NEON_DIM,
+            borderColor: NEON_BORDER,
+            fontFamily: "var(--font-geist-mono)",
+            letterSpacing: "0.12em",
+            textTransform: "uppercase",
+            fontSize: 11,
+          }}
+        >
+          Recipe Builder
+        </Badge>
+        <Title order={1} ff="var(--font-geist-mono)" fw={900} fz={28} style={{ color: "#f0fdf4" }}>
+          New <span style={{ color: NEON }}>Recipe</span>
+        </Title>
+        <Text fz="sm" mt={4} style={{ color: "#6b7280" }}>
           Define what an item is made of and which machine produces it.
-        </p>
+        </Text>
       </div>
       <RecipeForm
         initialName={name ?? ""}
         existingRecipes={existingRecipes}
         ingredientNames={ingredientNames}
       />
-    </div>
+    </Stack>
   );
 }
