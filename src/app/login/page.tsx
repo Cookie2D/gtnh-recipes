@@ -1,9 +1,44 @@
 "use client";
 
-import { useState } from "react";
+import { loginAction } from "@/app/actions/auth";
+import GameBackground from "@/components/ui/GameBackground";
+import { NEON, NEON_BORDER } from "@/lib/theme";
+import {
+  Anchor,
+  Box,
+  Button,
+  Divider,
+  Paper,
+  PasswordInput,
+  Stack,
+  Text,
+  TextInput,
+  Title,
+} from "@mantine/core";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { loginAction } from "@/app/actions/auth";
+import { useState } from "react";
+
+const inputStyles = {
+  input: {
+    background: "#1a1a1a",
+    border: `1px solid rgba(255,255,255,0.08)`,
+    color: "#f0fdf4",
+    fontFamily: "var(--font-geist-mono)",
+    fontSize: 13,
+    "&:focus": {
+      borderColor: NEON_BORDER,
+    },
+  },
+  label: {
+    color: "#6b7280",
+    fontFamily: "var(--font-geist-mono)",
+    fontSize: 11,
+    textTransform: "uppercase" as const,
+    letterSpacing: "0.12em",
+    marginBottom: 6,
+  },
+};
 
 export default function LoginPage() {
   const router = useRouter();
@@ -30,76 +65,145 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="flex-1 flex items-center justify-center px-4">
-      <div
-        className="w-full max-w-sm rounded-xl p-8 space-y-6"
-        style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+    <Box
+      component="main"
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "1rem",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      <GameBackground />
+
+      <Stack
+        gap="md"
+        style={{
+          position: "relative",
+          zIndex: 1,
+          width: "100%",
+          maxWidth: 380,
+        }}
       >
-        <div>
-          <h1 className="text-2xl font-bold">Sign in</h1>
-          <p className="text-sm mt-1" style={{ color: "var(--muted)" }}>
-            Don&apos;t have an account?{" "}
-            <Link href="/register" style={{ color: "var(--accent)" }}>
-              Register
-            </Link>
-          </p>
-        </div>
-
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Email or username
-            </label>
-            <input
-              type="text"
-              required
-              value={identifier}
-              onChange={(e) => setIdentifier(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg text-sm outline-none focus:ring-1"
+        <Stack gap={4} align="center">
+          <Link href="/">
+            <Title
+              order={1}
+              ff="var(--font-geist-mono)"
+              fw={900}
+              fz={28}
               style={{
-                background: "var(--surface-2)",
-                border: "1px solid var(--border)",
-                color: "var(--foreground)",
+                color: "#f0fdf4",
+                textShadow: "0 0 30px rgba(74,222,128,0.35)",
+                textDecoration: "none",
               }}
-              placeholder="you@example.com or CreeperSlayer"
-              autoComplete="username"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1">Password</label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg text-sm outline-none focus:ring-1"
-              style={{
-                background: "var(--surface-2)",
-                border: "1px solid var(--border)",
-                color: "var(--foreground)",
-              }}
-              placeholder="••••••••"
-              autoComplete="current-password"
-            />
-          </div>
-
-          {error && (
-            <p className="text-sm" style={{ color: "var(--error)" }}>
-              {error}
-            </p>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full py-2 rounded-lg font-semibold text-sm transition-opacity disabled:opacity-60"
-            style={{ background: "var(--accent)", color: "#fff" }}
+            >
+              Mod<span style={{ color: NEON }}>Crafter</span>
+            </Title>
+          </Link>
+          <Text
+            fz={11}
+            ff="var(--font-geist-mono)"
+            tt="uppercase"
+            style={{ color: "#4b5563", letterSpacing: "0.12em" }}
           >
-            {loading ? "Signing in..." : "Sign in"}
-          </button>
-        </form>
-      </div>
-    </main>
+            Sign in to your account
+          </Text>
+        </Stack>
+
+        <Paper
+          p="xl"
+          radius="md"
+          style={{
+            background: "#141414",
+            border: `1px solid ${NEON_BORDER}`,
+            boxShadow: "0 0 40px rgba(74,222,128,0.06)",
+          }}
+        >
+          <form onSubmit={handleLogin}>
+            <Stack gap="md">
+              <TextInput
+                label="Email or username"
+                required
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
+                placeholder="you@example.com"
+                autoComplete="username"
+                styles={inputStyles}
+              />
+
+              <PasswordInput
+                label="Password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                autoComplete="current-password"
+                styles={{
+                  ...inputStyles,
+                  innerInput: {
+                    color: "#f0fdf4",
+                    fontFamily: "var(--font-geist-mono)",
+                    fontSize: 13,
+                  },
+                }}
+              />
+
+              {error && (
+                <Text
+                  fz="xs"
+                  ff="var(--font-geist-mono)"
+                  p="xs"
+                  style={{
+                    color: "#f87171",
+                    background: "rgba(248,113,113,0.08)",
+                    border: "1px solid rgba(248,113,113,0.2)",
+                    borderRadius: 8,
+                  }}
+                >
+                  {error}
+                </Text>
+              )}
+
+              <Button
+                type="submit"
+                loading={loading}
+                fullWidth
+                ff="var(--font-geist-mono)"
+                fw={700}
+                tt="uppercase"
+                style={{
+                  background: NEON,
+                  color: "#0a0a0a",
+                  boxShadow: "0 0 20px rgba(74,222,128,0.3)",
+                  letterSpacing: "0.08em",
+                  border: "none",
+                }}
+              >
+                Sign in →
+              </Button>
+
+              <Divider style={{ borderColor: "rgba(255,255,255,0.06)" }} />
+
+              <Text ta="center" fz="xs" style={{ color: "#4b5563" }}>
+                No account?{" "}
+                <Anchor
+                  component={Link}
+                  href="/register"
+                  ff="var(--font-geist-mono)"
+                  fw={700}
+                  style={{ color: NEON }}
+                >
+                  Register free
+                </Anchor>
+              </Text>
+            </Stack>
+          </form>
+        </Paper>
+      </Stack>
+    </Box>
   );
 }

@@ -10,10 +10,19 @@ const dark: MantineColorsTuple = [
   "#373A40", "#2C2E33", "#242424", "#1a1a1a", "#141414", "#0f0f0f",
 ];
 
+const neon: MantineColorsTuple = [
+  "#f0fdf4", "#dcfce7", "#bbf7d0", "#86efac", "#4ade80",
+  "#22c55e", "#16a34a", "#15803d", "#166534", "#14532d",
+];
+
+export const NEON = "#4ade80";
+export const NEON_BORDER = "rgba(74,222,128,0.25)";
+export const NEON_DIM = "rgba(74,222,128,0.08)";
+
 export const theme = createTheme({
-  primaryColor: "orange",
-  primaryShade: 5,
-  colors: { orange, dark },
+  primaryColor: "neon",
+  primaryShade: 4,
+  colors: { orange, dark, neon },
   defaultRadius: "md",
   fontFamily: "var(--font-geist-sans), -apple-system, BlinkMacSystemFont, sans-serif",
   fontFamilyMonospace: "var(--font-geist-mono), ui-monospace, monospace",
