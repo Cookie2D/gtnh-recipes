@@ -1,10 +1,12 @@
-import { notFound } from "next/navigation";
-import { Stack, Title, Text } from "@mantine/core";
 import RecipeForm from "@/components/recipes/RecipeForm";
-import { Json } from "@/types/database";
 import { requireUserId } from "@/lib/data/auth";
-import { getRecipeById, getRecipesWithVariants, extractIngredientNames } from "@/lib/data/recipes";
-import { NEON } from "@/lib/theme";
+import {
+  extractIngredientNames,
+  getRecipeById,
+  getRecipesWithVariants,
+} from "@/lib/data/recipes";
+import { Stack, Title } from "@mantine/core";
+import { notFound } from "next/navigation";
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -35,12 +37,12 @@ export default async function EditRecipePage({ params }: Props) {
   return (
     <Stack gap="xl">
       <div>
-        <Title order={1} ff="var(--font-geist-mono)" fw={900} fz={28} style={{ color: "#f0fdf4" }}>
-          Edit <span style={{ color: NEON }}>{recipe.name}</span>
+        <Title order={1} className="page-title">
+          Edit <span className="text-neon">{recipe.name}</span>
         </Title>
-        <Text fz="sm" mt={4} style={{ color: "#6b7280" }}>
+        <p className="page-subtitle">
           Update ingredients, machine, or output quantity.
-        </Text>
+        </p>
       </div>
       <RecipeForm
         recipeId={recipe.id}

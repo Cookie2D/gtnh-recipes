@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Accordion, Alert, Button, Card, Group, Stack, Text, TextInput } from "@mantine/core";
+import { Accordion, Alert, Button, Card, Group, Stack, TextInput } from "@mantine/core";
 import { AlertCircle, Plus } from "lucide-react";
 import { createRecipeAction, updateRecipeAction, deleteRecipeAction, VariantInput } from "@/app/actions/recipes";
 import { ExistingRecipe } from "@/types";
@@ -129,7 +129,7 @@ export default function RecipeForm({
       <Stack maw={672} gap="lg">
         <Card withBorder>
           <Stack gap="sm">
-            <Text size="xs" fw={600} tt="uppercase" c="dimmed">Output</Text>
+            <p className="auth-eyebrow">Output</p>
             <TextInput
               label="Item name"
               placeholder='e.g. "Electric Motor (LV)"'
@@ -141,7 +141,7 @@ export default function RecipeForm({
         </Card>
 
         <Stack gap="xs">
-          <Text size="xs" fw={600} tt="uppercase" c="dimmed">Crafting variants</Text>
+          <p className="auth-eyebrow">Crafting variants</p>
           <Accordion
             multiple
             variant="separated"

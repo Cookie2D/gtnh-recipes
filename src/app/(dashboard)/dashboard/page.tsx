@@ -1,14 +1,14 @@
-import { Stack, Title, Text, SimpleGrid, Box } from "@mantine/core";
+import { Stack, Title, SimpleGrid } from "@mantine/core";
 import Link from "next/link";
 import { BookOpen, Calculator, Plus } from "lucide-react";
 import { requireUser } from "@/lib/data/auth";
 import { getRecipesCount } from "@/lib/data/recipes";
-import { NEON, NEON_BORDER, NEON_DIM } from "@/lib/theme";
+import { NEON } from "@/lib/theme";
 
 const quickLinks = [
-  { href: "/recipes/new", label: "New Recipe",   sub: "Add to your recipe book",    icon: Plus },
-  { href: "/recipes",     label: "My Recipes",   sub: null,                          icon: BookOpen },
-  { href: "/calculator",  label: "Calculator",   sub: "Calculate a crafting chain",  icon: Calculator },
+  { href: "/recipes/new", label: "New Recipe",  sub: "Add to your recipe book",   icon: Plus },
+  { href: "/recipes",     label: "My Recipes",  sub: null,                         icon: BookOpen },
+  { href: "/calculator",  label: "Calculator",  sub: "Calculate a crafting chain", icon: Calculator },
 ];
 
 export default async function DashboardPage() {
@@ -19,12 +19,10 @@ export default async function DashboardPage() {
   return (
     <Stack gap="xl">
       <div>
-        <Title order={1} ff="var(--font-geist-mono)" fw={900} fz={28} style={{ color: "#f0fdf4" }}>
-          Welcome back, <span style={{ color: NEON }}>{username}</span>
+        <Title order={1} className="page-title">
+          Welcome back, <span className="text-neon">{username}</span>
         </Title>
-        <Text fz="sm" mt={4} style={{ color: "#6b7280" }}>
-          Your modded crafting recipe hub.
-        </Text>
+        <p className="page-subtitle">Your modded crafting recipe hub.</p>
       </div>
 
       <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing="sm">
@@ -35,25 +33,14 @@ export default async function DashboardPage() {
             className="neon-card"
             style={{ display: "flex", alignItems: "center", gap: 16, padding: "20px" }}
           >
-            <Box
-              style={{
-                padding: 10,
-                borderRadius: 8,
-                background: NEON_DIM,
-                border: `1px solid ${NEON_BORDER}`,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexShrink: 0,
-              }}
-            >
+            <div className="neon-icon-box">
               <Icon size={20} color={NEON} />
-            </Box>
+            </div>
             <div>
-              <Text fw={600} fz="sm" style={{ color: "#f0fdf4" }}>{label}</Text>
-              <Text fz="xs" style={{ color: "#6b7280" }}>
+              <p className="recipe-card-name" style={{ marginBottom: 2 }}>{label}</p>
+              <p className="text-dim" style={{ fontSize: "var(--mantine-font-size-xs)" }}>
                 {href === "/recipes" ? `${recipesCount} recipes` : sub}
-              </Text>
+              </p>
             </div>
           </Link>
         ))}

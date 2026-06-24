@@ -1,6 +1,6 @@
 "use client";
 
-import { ActionIcon, Accordion, Badge, Box, Button, Group, NumberInput, Stack, Text, TextInput } from "@mantine/core";
+import { ActionIcon, Accordion, Badge, Box, Button, Group, NumberInput, Stack, TextInput } from "@mantine/core";
 import { Plus, Trash2 } from "lucide-react";
 import IngredientRow from "./IngredientRow";
 
@@ -31,7 +31,7 @@ export default function VariantSection({
       <Box style={{ display: "flex", alignItems: "center" }}>
         <Accordion.Control style={{ flex: 1 }}>
           <Group gap="xs">
-            <Text size="sm" fw={500}>Variant {index + 1}</Text>
+            <span style={{ fontSize: "var(--mantine-font-size-sm)" }}>Variant {index + 1}</span>
             {variant.machine && (
               <Badge variant="light" color="orange" size="xs">{variant.machine}</Badge>
             )}
@@ -74,7 +74,7 @@ export default function VariantSection({
           </Group>
 
           <Stack gap={4}>
-            <Text size="sm" fw={500}>Ingredients</Text>
+            <span style={{ fontSize: "var(--mantine-font-size-sm)", fontWeight: 500 }}>Ingredients</span>
             <Stack gap="xs">
               {variant.inputs.map((inp, ii) => (
                 <IngredientRow

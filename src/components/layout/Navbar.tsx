@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Box, Button, Group, Text } from "@mantine/core";
+import { Box, Button, Group } from "@mantine/core";
 import { Calculator, BookOpen, LayoutDashboard, LogOut } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import { NEON, NEON_BORDER, NEON_DIM } from "@/lib/theme";
+import { NEON } from "@/lib/theme";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -29,27 +29,12 @@ export default function Navbar() {
       component="nav"
       px="md"
       py="sm"
-      style={{
-        borderBottom: `1px solid ${NEON_BORDER}`,
-        background: "#141414",
-      }}
+      className="navbar-root"
     >
       <Group gap="xs">
-        <Text
-          component={Link}
-          href="/dashboard"
-          ff="var(--font-geist-mono)"
-          fw={900}
-          fz="lg"
-          mr="md"
-          style={{
-            textDecoration: "none",
-            color: "#f0fdf4",
-            textShadow: "0 0 20px rgba(74,222,128,0.3)",
-          }}
-        >
+        <Link href="/dashboard" className="navbar-logo">
           Mod<span style={{ color: NEON }}>Crafter</span>
-        </Text>
+        </Link>
 
         <Group gap={4} flex={1}>
           {navItems.map(({ href, label, icon: Icon }) => {
@@ -62,21 +47,8 @@ export default function Navbar() {
                 variant="subtle"
                 size="sm"
                 leftSection={<Icon size={15} />}
-                ff="var(--font-geist-mono)"
-                style={
-                  active
-                    ? {
-                        color: NEON,
-                        background: NEON_DIM,
-                        border: `1px solid ${NEON_BORDER}`,
-                        fontWeight: 700,
-                      }
-                    : {
-                        color: "#6b7280",
-                        background: "transparent",
-                        border: "1px solid transparent",
-                      }
-                }
+                className="nav-btn"
+                data-active={active}
               >
                 {label}
               </Button>
@@ -89,14 +61,7 @@ export default function Navbar() {
           size="sm"
           leftSection={<LogOut size={15} />}
           onClick={handleLogout}
-          ff="var(--font-geist-mono)"
-          fw={700}
-          tt="uppercase"
-          style={{
-            color: "#9ca3af",
-            borderColor: "rgba(156,163,175,0.3)",
-            letterSpacing: "0.06em",
-          }}
+          className="navbar-signout"
         >
           Sign out
         </Button>
