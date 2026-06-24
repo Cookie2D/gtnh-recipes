@@ -1,11 +1,11 @@
 "use client";
 
-import { ActionIcon, Accordion, Badge, Box, Button, Group, Stack, Text, TextInput } from "@mantine/core";
+import { ActionIcon, Accordion, Badge, Box, Button, Group, NumberInput, Stack, Text, TextInput } from "@mantine/core";
 import { Plus, Trash2 } from "lucide-react";
 import IngredientRow from "./IngredientRow";
 
 interface RecipeInput { item: string; quantity: number; }
-interface Variant { inputs: RecipeInput[]; machine: string; }
+interface Variant { inputs: RecipeInput[]; machine: string; outputQuantity: number; }
 
 interface Props {
   index: number;
@@ -15,6 +15,7 @@ interface Props {
   recipeIndex: Map<string, string>;
   onRemove: () => void;
   onMachineChange: (value: string) => void;
+  onOutputQuantityChange: (value: number) => void;
   onItemChange: (inputIdx: number, value: string) => void;
   onQuantityChange: (inputIdx: number, value: number) => void;
   onAddInput: () => void;
@@ -23,7 +24,7 @@ interface Props {
 
 export default function VariantSection({
   index, variant, canRemove, suggestions, recipeIndex,
-  onRemove, onMachineChange, onItemChange, onQuantityChange, onAddInput, onRemoveInput,
+  onRemove, onMachineChange, onOutputQuantityChange, onItemChange, onQuantityChange, onAddInput, onRemoveInput,
 }: Props) {
   return (
     <Accordion.Item value={String(index)}>
@@ -52,13 +53,25 @@ export default function VariantSection({
 
       <Accordion.Panel>
         <Stack gap="sm">
-          <TextInput
-            label="Machine (optional)"
-            placeholder='e.g. "Bending Machine"'
-            value={variant.machine}
-            onChange={(e) => onMachineChange(e.currentTarget.value)}
-            size="sm"
-          />
+          <Group align="flex-end" gap="sm">
+            <TextInput
+              flex={1}
+              label="Machine (optional)"
+              placeholder='e.g. "Bending Machine"'
+              value={variant.machine}
+              onChange={(e) => onMachineChange(e.currentTarget.value)}
+              size="sm"
+            />
+            <NumberInput
+              w={120}
+              label="Qty produced"
+              value={variant.outputQuantity}
+              onChange={(v) => onOutputQuantityChange(Number(v) || 1)}
+              min={1}
+              size="sm"
+              required
+            />
+          </Group>
 
           <Stack gap={4}>
             <Text size="sm" fw={500}>Ingredients</Text>

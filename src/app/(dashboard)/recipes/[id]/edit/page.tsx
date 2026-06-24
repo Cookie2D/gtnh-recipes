@@ -26,6 +26,7 @@ export default async function EditRecipePage({ params }: Props) {
     .map((v) => ({
       inputs: v.inputs as { item: string; quantity: number }[],
       machine: (v.machines as string[])[0] ?? "",
+      outputQuantity: v.output_quantity,
     }));
 
   const existingRecipes = allRecipes.map((r) => ({ id: r.id, name: r.name }));
@@ -44,7 +45,6 @@ export default async function EditRecipePage({ params }: Props) {
       <RecipeForm
         recipeId={recipe.id}
         initialName={recipe.name}
-        initialOutputQuantity={recipe.output_quantity}
         initialVariants={initialVariants}
         existingRecipes={existingRecipes}
         ingredientNames={ingredientNames}

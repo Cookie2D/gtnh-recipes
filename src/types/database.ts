@@ -55,7 +55,6 @@ export interface Database {
           user_id: string;
           name: string;
           output_item: string;
-          output_quantity: number;
           icon_url: string | null;
           version: string;
           created_at: string;
@@ -66,7 +65,6 @@ export interface Database {
           user_id: string;
           name: string;
           output_item: string;
-          output_quantity: number;
           icon_url?: string | null;
           version?: string;
           created_at?: string;
@@ -75,7 +73,6 @@ export interface Database {
         Update: {
           name?: string;
           output_item?: string;
-          output_quantity?: number;
           icon_url?: string | null;
           updated_at?: string;
         };
@@ -88,6 +85,7 @@ export interface Database {
           variant_index: number;
           inputs: Json;
           machines: Json;
+          output_quantity: number;
           efficiency_score: number | null;
           created_at: string;
         };
@@ -97,12 +95,14 @@ export interface Database {
           variant_index: number;
           inputs: Json;
           machines: Json;
+          output_quantity?: number;
           efficiency_score?: number | null;
           created_at?: string;
         };
         Update: {
           inputs?: Json;
           machines?: Json;
+          output_quantity?: number;
           efficiency_score?: number | null;
         };
         Relationships: [];

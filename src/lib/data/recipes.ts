@@ -9,7 +9,6 @@ export type RecipeSummary = {
 export type RecipeListItem = {
   id: string;
   name: string;
-  output_quantity: number;
   version: string;
   created_at: string;
 };
@@ -23,11 +22,11 @@ export type RecipeWithVariants = {
 export type RecipeDetail = {
   id: string;
   name: string;
-  output_quantity: number;
   recipe_variants: {
     variant_index: number;
     inputs: Json;
     machines: Json;
+    output_quantity: number;
   }[];
 };
 
@@ -44,7 +43,7 @@ export async function getRecipeList(userId: string): Promise<RecipeListItem[]> {
   const supabase = await createClient();
   const { data } = await supabase
     .from("recipes")
-    .select("id, name, output_quantity, version, created_at")
+    .select("id, name, version, created_at")
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
   return (data as RecipeListItem[] | null) ?? [];
@@ -73,7 +72,7 @@ export async function getRecipeById(id: string, userId: string): Promise<RecipeD
   const supabase = await createClient();
   const { data } = await supabase
     .from("recipes")
-    .select("id, name, output_quantity, recipe_variants(variant_index, inputs, machines)")
+    .select("id, name, recipe_variants(variant_index, inputs, machines, output_quantity)")
     .eq("id", id)
     .eq("user_id", userId)
     .single();

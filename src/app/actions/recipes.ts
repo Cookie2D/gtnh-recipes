@@ -7,11 +7,11 @@ import { Json } from "@/types/database";
 export interface VariantInput {
   inputs: { item: string; quantity: number }[];
   machine: string;
+  outputQuantity: number;
 }
 
 export async function createRecipeAction(
   name: string,
-  outputQuantity: number,
   variants: VariantInput[]
 ): Promise<{ error?: string; id?: string }> {
   const supabase = await createClient();
@@ -20,7 +20,7 @@ export async function createRecipeAction(
 
   const { data: recipe, error: recipeError } = await supabase
     .from("recipes")
-    .insert({ user_id: user.id, name, output_item: name, output_quantity: outputQuantity })
+    .insert({ user_id: user.id, name, output_item: name })
     .select("id")
     .single();
 
@@ -35,6 +35,7 @@ export async function createRecipeAction(
     variant_index: i,
     inputs: v.inputs as unknown as Json,
     machines: (v.machine ? [v.machine] : []) as unknown as Json,
+    output_quantity: v.outputQuantity,
   }));
 
   const { error: variantError } = await supabase.from("recipe_variants").insert(variantRows);
@@ -47,7 +48,6 @@ export async function createRecipeAction(
 export async function updateRecipeAction(
   id: string,
   name: string,
-  outputQuantity: number,
   variants: VariantInput[]
 ): Promise<{ error?: string }> {
   const supabase = await createClient();
@@ -56,7 +56,7 @@ export async function updateRecipeAction(
 
   const { error: updateError } = await supabase
     .from("recipes")
-    .update({ name, output_item: name, output_quantity: outputQuantity, updated_at: new Date().toISOString() })
+    .update({ name, output_item: name, updated_at: new Date().toISOString() })
     .eq("id", id)
     .eq("user_id", user.id);
 
@@ -69,6 +69,7 @@ export async function updateRecipeAction(
     variant_index: i,
     inputs: v.inputs as unknown as Json,
     machines: (v.machine ? [v.machine] : []) as unknown as Json,
+    output_quantity: v.outputQuantity,
   }));
 
   const { error: variantError } = await supabase.from("recipe_variants").insert(variantRows);

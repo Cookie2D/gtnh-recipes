@@ -6,11 +6,11 @@ import { Json } from "@/types/database";
 
 interface RecipeRow {
   name: string;
-  output_quantity: number;
   recipe_variants: {
     variant_index: number;
     inputs: Json;
     machines: Json;
+    output_quantity: number;
   }[];
 }
 
@@ -37,7 +37,7 @@ export async function calculateAction(
 
   const { data: recipes, error: fetchError } = await supabase
     .from("recipes")
-    .select("name, output_quantity, recipe_variants(variant_index, inputs, machines)")
+    .select("name, recipe_variants(variant_index, inputs, machines, output_quantity)")
     .eq("user_id", user.id);
 
   if (fetchError || !recipes) {
@@ -70,7 +70,7 @@ export async function calculateAction(
     const machines = variant.machines as string[];
 
     recipeMap[r.name] = {
-      outputQuantity: r.output_quantity,
+      outputQuantity: variant.output_quantity,
       inputs,
       machine: machines[0] ?? "",
     };

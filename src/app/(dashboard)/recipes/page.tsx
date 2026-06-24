@@ -110,7 +110,7 @@ export default async function RecipesPage() {
                 ff="var(--font-geist-mono)"
                 style={{ color: "#6b7280" }}
               >
-                Outputs ×{recipe.output_quantity} · v{recipe.version}
+                v{recipe.version}
               </Text>
             </Link>
           ))}

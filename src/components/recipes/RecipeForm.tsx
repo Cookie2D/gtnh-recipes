@@ -2,30 +2,28 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Accordion, Alert, Button, Card, Group, NumberInput, Stack, Text, TextInput } from "@mantine/core";
+import { Accordion, Alert, Button, Card, Group, Stack, Text, TextInput } from "@mantine/core";
 import { AlertCircle, Plus } from "lucide-react";
 import { createRecipeAction, updateRecipeAction, deleteRecipeAction, VariantInput } from "@/app/actions/recipes";
 import { ExistingRecipe } from "@/types";
 import VariantSection from "./VariantSection";
 
 interface RecipeInput { item: string; quantity: number; }
-interface Variant { inputs: RecipeInput[]; machine: string; }
+interface Variant { inputs: RecipeInput[]; machine: string; outputQuantity: number; }
 
 interface Props {
   recipeId?: string;
   initialName?: string;
-  initialOutputQuantity?: number;
   initialVariants?: Variant[];
   existingRecipes?: ExistingRecipe[];
   ingredientNames?: string[];
 }
 
-const emptyVariant = (): Variant => ({ inputs: [{ item: "", quantity: 1 }], machine: "" });
+const emptyVariant = (): Variant => ({ inputs: [{ item: "", quantity: 1 }], machine: "", outputQuantity: 1 });
 
 export default function RecipeForm({
   recipeId,
   initialName = "",
-  initialOutputQuantity = 1,
   initialVariants,
   existingRecipes = [],
   ingredientNames = [],
@@ -37,7 +35,6 @@ export default function RecipeForm({
   const router = useRouter();
 
   const [name, setName] = useState(initialName);
-  const [outputQuantity, setOutputQuantity] = useState(initialOutputQuantity);
   const [variants, setVariants] = useState<Variant[]>(initialVariants ?? [emptyVariant()]);
   const [openVariants, setOpenVariants] = useState<string[]>(["0"]);
   const [error, setError] = useState("");
@@ -62,6 +59,9 @@ export default function RecipeForm({
 
   const updateVariantMachine = (i: number, machine: string) =>
     setVariants((v) => v.map((variant, idx) => (idx === i ? { ...variant, machine } : variant)));
+
+  const updateVariantOutputQuantity = (i: number, outputQuantity: number) =>
+    setVariants((v) => v.map((variant, idx) => (idx === i ? { ...variant, outputQuantity } : variant)));
 
   const addInput = (vi: number) =>
     setVariants((v) =>
@@ -103,11 +103,12 @@ export default function RecipeForm({
     const cleanVariants: VariantInput[] = variants.map((v) => ({
       inputs: v.inputs.filter((inp) => inp.item.trim() !== ""),
       machine: v.machine.trim(),
+      outputQuantity: v.outputQuantity,
     }));
 
     const result = isEdit
-      ? await updateRecipeAction(recipeId!, name, outputQuantity, cleanVariants)
-      : await createRecipeAction(name, outputQuantity, cleanVariants);
+      ? await updateRecipeAction(recipeId!, name, cleanVariants)
+      : await createRecipeAction(name, cleanVariants);
 
     if (result.error) { setError(result.error); setLoading(false); return; }
     router.push("/recipes");
@@ -129,24 +130,13 @@ export default function RecipeForm({
         <Card withBorder>
           <Stack gap="sm">
             <Text size="xs" fw={600} tt="uppercase" c="dimmed">Output</Text>
-            <Group align="flex-end" gap="sm">
-              <TextInput
-                flex={1}
-                label="Item name"
-                placeholder='e.g. "Electric Motor (LV)"'
-                value={name}
-                onChange={(e) => setName(e.currentTarget.value)}
-                required
-              />
-              <NumberInput
-                w={120}
-                label="Qty produced"
-                value={outputQuantity}
-                onChange={(v) => setOutputQuantity(Number(v) || 1)}
-                min={1}
-                required
-              />
-            </Group>
+            <TextInput
+              label="Item name"
+              placeholder='e.g. "Electric Motor (LV)"'
+              value={name}
+              onChange={(e) => setName(e.currentTarget.value)}
+              required
+            />
           </Stack>
         </Card>
 
@@ -168,6 +158,7 @@ export default function RecipeForm({
                 recipeIndex={recipeIndex}
                 onRemove={() => removeVariant(vi)}
                 onMachineChange={(v) => updateVariantMachine(vi, v)}
+                onOutputQuantityChange={(v) => updateVariantOutputQuantity(vi, v)}
                 onItemChange={(ii, v) => updateItem(vi, ii, v)}
                 onQuantityChange={(ii, v) => updateQuantity(vi, ii, v)}
                 onAddInput={() => addInput(vi)}
