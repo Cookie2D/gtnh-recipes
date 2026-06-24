@@ -2,6 +2,7 @@
 
 import { loginAction } from "@/app/actions/auth";
 import GameBackground from "@/components/ui/GameBackground";
+import Logo from "@/components/ui/Logo";
 import { NEON, NEON_BORDER } from "@/lib/theme";
 import {
   Anchor,
@@ -13,7 +14,6 @@ import {
   Stack,
   Text,
   TextInput,
-  Title,
 } from "@mantine/core";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -89,21 +89,8 @@ export default function LoginPage() {
         }}
       >
         <Stack gap={4} align="center">
-          <Link href="/">
-            <Title
-              order={1}
-              ff="var(--font-geist-mono)"
-              fw={900}
-              fz={28}
-              style={{
-                color: "#f0fdf4",
-                textShadow: "0 0 30px rgba(74,222,128,0.35)",
-                textDecoration: "none",
-              }}
-            >
-              Mod<span style={{ color: NEON }}>Crafter</span>
-            </Title>
-          </Link>
+          <Logo />
+
           <Text
             fz={11}
             ff="var(--font-geist-mono)"

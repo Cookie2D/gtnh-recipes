@@ -1,15 +1,23 @@
 "use client";
 
-import { useState } from "react";
+import { registerAction } from "@/app/actions/auth";
+import GameBackground from "@/components/ui/GameBackground";
+import Logo from "@/components/ui/Logo";
+import { NEON, NEON_BORDER } from "@/lib/theme";
+import {
+  Anchor,
+  Box,
+  Button,
+  Divider,
+  Paper,
+  PasswordInput,
+  Stack,
+  Text,
+  TextInput,
+} from "@mantine/core";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import {
-  Box, Stack, Title, Text, TextInput, PasswordInput,
-  Button, Anchor, Paper, Divider,
-} from "@mantine/core";
-import GameBackground from "@/components/ui/GameBackground";
-import { registerAction } from "@/app/actions/auth";
-import { NEON, NEON_BORDER } from "@/lib/theme";
+import { useState } from "react";
 
 const inputStyles = {
   input: {
@@ -72,23 +80,17 @@ export default function RegisterPage() {
     >
       <GameBackground />
 
-      <Stack gap="md" style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: 380 }}>
+      <Stack
+        gap="md"
+        style={{
+          position: "relative",
+          zIndex: 1,
+          width: "100%",
+          maxWidth: 380,
+        }}
+      >
         <Stack gap={4} align="center">
-          <Title
-            order={1}
-            ff="var(--font-geist-mono)"
-            fw={900}
-            fz={28}
-            component={Link}
-            href="/"
-            style={{
-              color: "#f0fdf4",
-              textShadow: "0 0 30px rgba(74,222,128,0.35)",
-              textDecoration: "none",
-            }}
-          >
-            Mod<span style={{ color: NEON }}>Crafter</span>
-          </Title>
+          <Logo />
           <Text
             fz={11}
             ff="var(--font-geist-mono)"
