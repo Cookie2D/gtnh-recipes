@@ -2,22 +2,19 @@
 
 import {
   calculateAction,
+  CalculateResult,
   loadVariantPrefs,
   saveVariantPref,
-  VariantOptions,
 } from "@/app/actions/calculator";
-import { EnrichedCraftingStep } from "@/types";
 import { Grid } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import CraftingStepsPanel from "./CraftingStepsPanel";
 import RawMaterialsPanel from "./RawMaterialsPanel";
 import SearchPanel from "./SearchPanel";
 
 export default function CalculatorClient() {
-  const [loading, setLoading] = useState(false);
-  const [rawMaterials, setRawMaterials] = useState<Record<string, number> | null>(null);
-  const [craftingSteps, setCraftingSteps] = useState<EnrichedCraftingStep[] | null>(null);
-  const [variantOptions, setVariantOptions] = useState<VariantOptions>({});
+  const [isPending, startTransition] = useTransition();
+  const [calculation, setCalculation] = useState<CalculateResult | null>(null);
   const [variantPrefs, setVariantPrefs] = useState<Record<string, number>>({});
   const [lastItem, setLastItem] = useState({ name: "", qty: 1 });
 
@@ -25,28 +22,20 @@ export default function CalculatorClient() {
     loadVariantPrefs().then(setVariantPrefs);
   }, []);
 
-  const handleCalculate = async (
+  const handleCalculate = (
     item: string,
-    quantity: number,
+    qty: number,
     prefs: Record<string, number> = variantPrefs,
   ) => {
-    setLoading(true);
-    setRawMaterials(null);
-    setCraftingSteps(null);
-
-    const result = await calculateAction(item, quantity, prefs);
-
-    if (!result.error) {
-      setRawMaterials(result.rawMaterials ?? null);
-      setCraftingSteps(result.craftingSteps ?? null);
-      setVariantOptions(result.variantOptions ?? {});
-    }
-    setLoading(false);
+    startTransition(async () => {
+      const res = await calculateAction(item, qty, prefs);
+      if (!res.error) setCalculation(res);
+    });
   };
 
-  const handleSelectRecipe = (item: string, quantity: number) => {
-    setLastItem({ name: item, qty: quantity });
-    handleCalculate(item, quantity, variantPrefs);
+  const handleSelectRecipe = (item: string, qty: number) => {
+    setLastItem({ name: item, qty });
+    handleCalculate(item, qty);
   };
 
   const handleVariantChange = (itemName: string, variantIndex: number) => {
@@ -56,31 +45,27 @@ export default function CalculatorClient() {
     handleCalculate(lastItem.name, lastItem.qty, newPrefs);
   };
 
-  const hasResults = rawMaterials !== null && craftingSteps !== null;
-
   return (
     <Grid>
       <Grid.Col span={{ base: 12, lg: 4 }}>
-        <SearchPanel onSelectRecipe={handleSelectRecipe} loading={loading} />
+        <SearchPanel onSelectRecipe={handleSelectRecipe} loading={isPending} />
       </Grid.Col>
 
-      {hasResults && (
+      {calculation && (
         <Grid.Col span={{ base: 12, lg: 4 }}>
           <RawMaterialsPanel
-            rawMaterials={rawMaterials!}
+            rawMaterials={calculation.rawMaterials}
             quantity={lastItem.qty}
             itemName={lastItem.name}
           />
         </Grid.Col>
       )}
 
-      {hasResults && craftingSteps!.length > 0 && (
+      {calculation && calculation.craftingSteps.length > 0 && (
         <Grid.Col span={{ base: 12, lg: 4 }}>
           <CraftingStepsPanel
             key={`${lastItem.name}-${lastItem.qty}`}
-            craftingSteps={craftingSteps!}
-            rawMaterials={rawMaterials!}
-            variantOptions={variantOptions}
+            calculation={calculation}
             variantPrefs={variantPrefs}
             onVariantChange={handleVariantChange}
           />

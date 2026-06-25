@@ -1,33 +1,33 @@
 "use client";
 
-import { VariantOptions } from "@/app/actions/calculator";
-import { EnrichedCraftingStep } from "@/types";
+import { CalculateResult } from "@/app/actions/calculator";
 import { Group, Stack, Text, ThemeIcon } from "@mantine/core";
 import { Wrench } from "lucide-react";
 import { useState } from "react";
 import CraftingStepCard from "./CraftingStepCard";
 
 interface Props {
-  craftingSteps: EnrichedCraftingStep[];
-  rawMaterials: Record<string, number>;
-  variantOptions: VariantOptions;
+  calculation: CalculateResult;
   variantPrefs: Record<string, number>;
   onVariantChange: (itemName: string, variantIndex: number) => void;
 }
 
 export default function CraftingStepsPanel({
-  craftingSteps,
-  rawMaterials,
-  variantOptions,
+  calculation,
   variantPrefs,
   onVariantChange,
 }: Props) {
+  const { craftingSteps, rawMaterials, variantOptions } = calculation;
   const [done, setDone] = useState<Set<string>>(new Set());
 
   const toggle = (name: string) =>
     setDone((prev) => {
       const next = new Set(prev);
-      next.has(name) ? next.delete(name) : next.add(name);
+      if (next.has(name)) {
+        next.delete(name);
+      } else {
+        next.add(name);
+      }
       return next;
     });
 
