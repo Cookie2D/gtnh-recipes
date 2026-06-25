@@ -211,6 +211,28 @@
   text-align: center;
 }
 
+/* ── Auth form inputs ────────────────────────────────────────────────────── */
+.auth-input {
+  background: #1a1a1a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #f0fdf4;
+  font-family: var(--font-geist-mono);
+  font-size: 13px;
+}
+.auth-input-label {
+  color: #6b7280;
+  font-family: var(--font-geist-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 6px;
+}
+.auth-password-inner {
+  color: #f0fdf4;
+  font-family: var(--font-geist-mono);
+  font-size: 13px;
+}
+
 /* ── Auth page card ──────────────────────────────────────────────────────── */
 .auth-card {
   background: #141414;
@@ -232,6 +254,7 @@
   border: none;
   font-family: var(--font-geist-mono);
   font-weight: 700;
+  text-transform: uppercase;
 }
 .auth-error {
   color: #f87171;
@@ -247,6 +270,8 @@
 }
 .auth-footer-link {
   color: #4ade80;
+  font-family: var(--font-geist-mono);
+  font-weight: 700;
 }
 
 /* ── Scrollbars ──────────────────────────────────────────────────────────── */

@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { redirect } from "next/navigation";
 
 export async function registerAction(
   email: string,
@@ -61,4 +62,27 @@ export async function loginAction(
 
   if (error) return { error: error.message };
   return {};
+}
+
+export async function loginFormAction(
+  _prev: { error?: string },
+  formData: FormData,
+): Promise<{ error?: string }> {
+  const identifier = formData.get("identifier") as string;
+  const password = formData.get("password") as string;
+  const result = await loginAction(identifier, password);
+  if (result.error) return { error: result.error };
+  redirect("/dashboard");
+}
+
+export async function registerFormAction(
+  _prev: { error?: string },
+  formData: FormData,
+): Promise<{ error?: string }> {
+  const email = formData.get("email") as string;
+  const username = formData.get("username") as string;
+  const password = formData.get("password") as string;
+  const result = await registerAction(email, username, password);
+  if (result.error) return { error: result.error };
+  redirect("/dashboard");
 }
