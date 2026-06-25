@@ -12,8 +12,11 @@
   background: #141414;
   text-decoration: none;
   transition: border-color 0.15s;
+  height: 90px;
 }
-.neon-card:hover { border-color: rgba(74, 222, 128, 0.25); }
+.neon-card:hover {
+  border-color: rgba(74, 222, 128, 0.25);
+}
 
 /* ── Navbar ───────────────────────────────────────────────────────────────── */
 .navbar-root {
@@ -73,10 +76,18 @@
 }
 
 /* ── Text utilities ───────────────────────────────────────────────────────── */
-.text-primary  { color: #f0fdf4; }
-.text-dim      { color: #6b7280; }
-.text-neon     { color: #4ade80; }
-.text-mono     { font-family: var(--font-geist-mono); }
+.text-primary {
+  color: #f0fdf4;
+}
+.text-dim {
+  color: #6b7280;
+}
+.text-neon {
+  color: #4ade80;
+}
+.text-mono {
+  font-family: var(--font-geist-mono);
+}
 
 /* ── Logo (auth pages) ────────────────────────────────────────────────────── */
 .logo-link {
@@ -92,14 +103,18 @@
 /* ── Landing page ─────────────────────────────────────────────────────────── */
 .landing-title {
   color: #f0fdf4;
-  text-shadow: 0 0 40px rgba(74, 222, 128, 0.4), 0 0 80px rgba(74, 222, 128, 0.15);
+  text-shadow:
+    0 0 40px rgba(74, 222, 128, 0.4),
+    0 0 80px rgba(74, 222, 128, 0.15);
   line-height: 1.1;
   font-family: var(--font-geist-mono);
   font-weight: 900;
   font-size: 3.25rem;
 }
 @media (min-width: 48em) {
-  .landing-title { font-size: 4.25rem; }
+  .landing-title {
+    font-size: 4.25rem;
+  }
 }
 .landing-subtitle {
   color: #6b7280;
@@ -224,12 +239,28 @@
   border: 1px solid rgba(248, 113, 113, 0.2);
   border-radius: 8px;
 }
-.auth-divider { border-color: rgba(255, 255, 255, 0.06); }
-.auth-footer-text { color: #4b5563; }
-.auth-footer-link { color: #4ade80; }
+.auth-divider {
+  border-color: rgba(255, 255, 255, 0.06);
+}
+.auth-footer-text {
+  color: #4b5563;
+}
+.auth-footer-link {
+  color: #4ade80;
+}
 
 /* ── Scrollbars ──────────────────────────────────────────────────────────── */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--mantine-color-dark-7); }
-::-webkit-scrollbar-thumb { background: var(--mantine-color-dark-4); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--mantine-color-dark-3); }
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--mantine-color-dark-7);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--mantine-color-dark-4);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--mantine-color-dark-3);
+}

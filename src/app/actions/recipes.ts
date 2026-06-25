@@ -1,8 +1,58 @@
 "use server";
 
+import { RecipeListItem } from "@/lib/data/recipes";
 import { createClient } from "@/lib/supabase/server";
-import { revalidatePath } from "next/cache";
 import { Json } from "@/types/database";
+import { revalidatePath } from "next/cache";
+
+const PAGE_SIZE = 39;
+
+export interface RecipePage {
+  items: RecipeListItem[];
+  nextCursor: string | null;
+}
+
+export async function getRecipePageAction(
+  cursor?: string,
+): Promise<RecipePage> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { items: [], nextCursor: null };
+
+  let query = supabase
+    .from("recipes")
+    .select("id, name, version, created_at")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false })
+    .order("id", { ascending: false })
+    .limit(PAGE_SIZE + 1);
+
+  if (cursor) {
+    const { created_at, id } = JSON.parse(cursor) as {
+      created_at: string;
+      id: string;
+    };
+    query = query.or(
+      `created_at.lt.${created_at},and(created_at.eq.${created_at},id.lt.${id})`,
+    );
+  }
+
+  const { data } = await query;
+  const items = (data as RecipeListItem[] | null) ?? [];
+
+  const hasMore = items.length > PAGE_SIZE;
+  if (hasMore) items.pop();
+
+  const last = items[items.length - 1];
+  const nextCursor =
+    hasMore && last
+      ? JSON.stringify({ created_at: last.created_at, id: last.id })
+      : null;
+
+  return { items, nextCursor };
+}
 
 export interface VariantInput {
   inputs: { item: string; quantity: number }[];
@@ -12,10 +62,12 @@ export interface VariantInput {
 
 export async function createRecipeAction(
   name: string,
-  variants: VariantInput[]
+  variants: VariantInput[],
 ): Promise<{ error?: string; id?: string }> {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return { error: "Not authenticated." };
 
   const { data: recipe, error: recipeError } = await supabase
@@ -26,7 +78,8 @@ export async function createRecipeAction(
 
   if (recipeError || !recipe) {
     const msg = recipeError?.message ?? "Failed to create recipe.";
-    if (msg.includes("unique")) return { error: "A recipe with this name already exists." };
+    if (msg.includes("unique"))
+      return { error: "A recipe with this name already exists." };
     return { error: msg };
   }
 
@@ -38,7 +91,9 @@ export async function createRecipeAction(
     output_quantity: v.outputQuantity,
   }));
 
-  const { error: variantError } = await supabase.from("recipe_variants").insert(variantRows);
+  const { error: variantError } = await supabase
+    .from("recipe_variants")
+    .insert(variantRows);
   if (variantError) return { error: variantError.message };
 
   revalidatePath("/recipes");
@@ -48,10 +103,12 @@ export async function createRecipeAction(
 export async function updateRecipeAction(
   id: string,
   name: string,
-  variants: VariantInput[]
+  variants: VariantInput[],
 ): Promise<{ error?: string }> {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return { error: "Not authenticated." };
 
   const { error: updateError } = await supabase
@@ -72,7 +129,9 @@ export async function updateRecipeAction(
     output_quantity: v.outputQuantity,
   }));
 
-  const { error: variantError } = await supabase.from("recipe_variants").insert(variantRows);
+  const { error: variantError } = await supabase
+    .from("recipe_variants")
+    .insert(variantRows);
   if (variantError) return { error: variantError.message };
 
   revalidatePath("/recipes");
@@ -80,9 +139,13 @@ export async function updateRecipeAction(
   return {};
 }
 
-export async function deleteRecipeAction(id: string): Promise<{ error?: string }> {
+export async function deleteRecipeAction(
+  id: string,
+): Promise<{ error?: string }> {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
   if (!user) return { error: "Not authenticated." };
 
   const { error } = await supabase
