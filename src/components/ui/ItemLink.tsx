@@ -1,44 +1,32 @@
-import { ExistingRecipe } from "@/types";
+import { RecipeItem } from "@/types";
 import { Anchor } from "@mantine/core";
 import { Pencil, Plus } from "lucide-react";
 import Link from "next/link";
 
 interface Props {
-  item: string;
-  recipeIndex: Map<string, string>;
+  item: RecipeItem;
   className?: string;
 }
 
-export function buildRecipeIndex(
-  recipes: ExistingRecipe[],
-): Map<string, string> {
-  return new Map(recipes.map((r) => [r.name.toLowerCase(), r.id]));
-}
+export default function ItemLink({ item, className }: Props) {
+  const name = item.name.trim();
+  if (!name) return <span className={className}>{item.name}</span>;
 
-export default function ItemLink({ item, recipeIndex, className }: Props) {
-  const trimmed = item.trim();
-  if (!trimmed) return <span className={className}>{item}</span>;
-
-  const existingId = recipeIndex.get(trimmed.toLowerCase());
-  const href = existingId
-    ? `/recipes/${existingId}/edit`
-    : `/recipes/new?name=${encodeURIComponent(trimmed)}`;
+  const href = item.id
+    ? `/recipes/${item.id}/edit`
+    : `/recipes/new?name=${encodeURIComponent(name)}`;
 
   return (
     <Anchor
       component={Link}
       href={href}
-      c={existingId ? "green" : "orange"}
+      c={item.id ? "green" : "orange"}
       className={className}
-      title={
-        existingId
-          ? `Edit recipe for "${trimmed}"`
-          : `Create recipe for "${trimmed}"`
-      }
+      title={item.id ? `Edit recipe for "${name}"` : `Create recipe for "${name}"`}
       style={{ display: "inline-flex", alignItems: "center", gap: 4 }}
     >
-      {trimmed}
-      {existingId ? <Pencil size={11} /> : <Plus size={11} />}
+      {name}
+      {item.id ? <Pencil size={11} /> : <Plus size={11} />}
     </Anchor>
   );
 }

@@ -1,47 +1,42 @@
 "use client";
 
-import { calculateAction, saveVariantPref, VariantOptions } from "@/app/actions/calculator";
-import { buildRecipeIndex } from "@/components/ui/ItemLink";
-import { CraftingStep } from "@/lib/calculator/engine";
-import { ExistingRecipe } from "@/types";
+import {
+  calculateAction,
+  loadVariantPrefs,
+  saveVariantPref,
+  VariantOptions,
+} from "@/app/actions/calculator";
+import { EnrichedCraftingStep } from "@/types";
 import { Grid } from "@mantine/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CraftingStepsPanel from "./CraftingStepsPanel";
-import ItemSearch from "./ItemSearch";
 import RawMaterialsPanel from "./RawMaterialsPanel";
+import SearchPanel from "./SearchPanel";
 
-interface Props {
-  recipeNames: string[];
-  existingRecipes: ExistingRecipe[];
-  initialVariantPrefs?: Record<string, number>;
-}
-
-export default function CalculatorClient({ recipeNames, existingRecipes, initialVariantPrefs = {} }: Props) {
+export default function CalculatorClient() {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const [rawMaterials, setRawMaterials] = useState<Record<string, number> | null>(null);
-  const [craftingSteps, setCraftingSteps] = useState<CraftingStep[] | null>(null);
+  const [craftingSteps, setCraftingSteps] = useState<EnrichedCraftingStep[] | null>(null);
   const [variantOptions, setVariantOptions] = useState<VariantOptions>({});
-  const [variantPrefs, setVariantPrefs] = useState<Record<string, number>>(initialVariantPrefs);
+  const [variantPrefs, setVariantPrefs] = useState<Record<string, number>>({});
   const [lastItem, setLastItem] = useState({ name: "", qty: 1 });
 
-  const recipeIndex = buildRecipeIndex(existingRecipes);
+  useEffect(() => {
+    loadVariantPrefs().then(setVariantPrefs);
+  }, []);
 
   const handleCalculate = async (
     item: string,
     quantity: number,
     prefs: Record<string, number> = variantPrefs,
   ) => {
-    setError("");
     setLoading(true);
     setRawMaterials(null);
     setCraftingSteps(null);
 
     const result = await calculateAction(item, quantity, prefs);
 
-    if (result.error) {
-      setError(result.error);
-    } else {
+    if (!result.error) {
       setRawMaterials(result.rawMaterials ?? null);
       setCraftingSteps(result.craftingSteps ?? null);
       setVariantOptions(result.variantOptions ?? {});
@@ -49,7 +44,7 @@ export default function CalculatorClient({ recipeNames, existingRecipes, initial
     setLoading(false);
   };
 
-  const handleNewCalculation = (item: string, quantity: number) => {
+  const handleSelectRecipe = (item: string, quantity: number) => {
     setLastItem({ name: item, qty: quantity });
     handleCalculate(item, quantity, variantPrefs);
   };
@@ -57,7 +52,7 @@ export default function CalculatorClient({ recipeNames, existingRecipes, initial
   const handleVariantChange = (itemName: string, variantIndex: number) => {
     const newPrefs = { ...variantPrefs, [itemName]: variantIndex };
     setVariantPrefs(newPrefs);
-    saveVariantPref(itemName, variantIndex); // fire-and-forget persist
+    saveVariantPref(itemName, variantIndex);
     handleCalculate(lastItem.name, lastItem.qty, newPrefs);
   };
 
@@ -66,12 +61,7 @@ export default function CalculatorClient({ recipeNames, existingRecipes, initial
   return (
     <Grid>
       <Grid.Col span={{ base: 12, lg: 4 }}>
-        <ItemSearch
-          recipeNames={recipeNames}
-          loading={loading}
-          error={error}
-          onCalculate={handleNewCalculation}
-        />
+        <SearchPanel onSelectRecipe={handleSelectRecipe} loading={loading} />
       </Grid.Col>
 
       {hasResults && (
@@ -90,7 +80,6 @@ export default function CalculatorClient({ recipeNames, existingRecipes, initial
             key={`${lastItem.name}-${lastItem.qty}`}
             craftingSteps={craftingSteps!}
             rawMaterials={rawMaterials!}
-            recipeIndex={recipeIndex}
             variantOptions={variantOptions}
             variantPrefs={variantPrefs}
             onVariantChange={handleVariantChange}

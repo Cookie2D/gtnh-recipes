@@ -3,19 +3,14 @@ export interface ExistingRecipe {
   name: string;
 }
 
-export interface RecipeIngredient {
-  item: string;
-  quantity: number;
+export interface RecipeItem {
+  name: string;
+  id?: string;
 }
 
-export interface CraftingStep {
-  item: string;
+export interface EnrichedCraftingStep {
+  item: RecipeItem;
   quantity: number;
-  inputs: RecipeIngredient[];
+  inputs: { item: RecipeItem; quantity: number }[];
   machine: string;
-}
-
-export interface CalculationResult {
-  rawMaterials: Record<string, number>;
-  craftingSteps: CraftingStep[];
 }
