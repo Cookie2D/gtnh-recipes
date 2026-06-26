@@ -1,6 +1,6 @@
 import { Stack, Title, Badge, Skeleton } from "@mantine/core";
 import RecipeForm from "@/components/recipes/RecipeForm";
-import { getUserId } from "@/lib/data/auth";
+import { requireUserId } from "@/lib/data/auth";
 import { getRecipesWithVariants, extractIngredientNames } from "@/lib/data/recipes";
 import { Suspense } from "react";
 
@@ -30,7 +30,7 @@ export default async function NewRecipePage({ searchParams }: Props) {
 }
 
 async function NewRecipeFormData({ initialName }: { initialName: string }) {
-  const userId = await getUserId();
+  const userId = await requireUserId();
   const recipes = await getRecipesWithVariants(userId);
   const existingRecipes = recipes.map((r) => ({ id: r.id, name: r.name }));
   const ingredientNames = extractIngredientNames(recipes);

@@ -1,5 +1,5 @@
 import RecipeForm from "@/components/recipes/RecipeForm";
-import { getUserId } from "@/lib/data/auth";
+import { requireUserId } from "@/lib/data/auth";
 import {
   extractIngredientNames,
   getRecipeById,
@@ -34,7 +34,7 @@ export default async function EditRecipePage({ params }: Props) {
 }
 
 async function EditRecipeFormData({ id }: { id: string }) {
-  const userId = await getUserId();
+  const userId = await requireUserId();
 
   const [recipe, allRecipes] = await Promise.all([
     getRecipeById(id, userId),
