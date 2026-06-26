@@ -5,7 +5,8 @@
       "PowerShell(npm --version)",
       "Bash(npx tsc *)",
       "PowerShell(Remove-Item \"E:\\\\Projects\\\\gtnh-crafting-system\\\\src\\\\components\\\\common\\\\Navbar.tsx\" -Confirm:$false)",
-      "mcp__visualize__read_me"
+      "mcp__visualize__read_me",
+      "Bash(graphify query *)"
     ]
   }
 }

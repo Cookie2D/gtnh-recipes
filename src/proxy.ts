@@ -25,21 +25,28 @@ export async function proxy(request: NextRequest) {
     }
   );
 
+  // Optimistic check: reads from cookie only, no Supabase network call.
+  // Also refreshes an expired token and writes the updated cookie back.
+  // Full auth verification still happens in requireUserId() inside Server Actions.
   const {
-    data: { user },
-  } = await supabase.auth.getUser();
+    data: { session },
+  } = await supabase.auth.getSession();
 
   const { pathname } = request.nextUrl;
 
   const protectedPaths = ["/dashboard", "/recipes", "/calculator"];
   const isProtected = protectedPaths.some((p) => pathname.startsWith(p));
 
-  if (!user && isProtected) {
+  if (!session && isProtected) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  if (user && (pathname === "/login" || pathname === "/register")) {
+  if (session && (pathname === "/login" || pathname === "/register")) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
+  if (session?.user) {
+    supabaseResponse.headers.set("x-user-id", session.user.id);
   }
 
   return supabaseResponse;

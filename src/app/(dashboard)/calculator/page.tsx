@@ -1,10 +1,7 @@
 import CalculatorClient from "@/components/calculator/CalculatorClient";
-import { requireUserId } from "@/lib/data/auth";
 import { Badge, Stack, Title } from "@mantine/core";
 
-export default async function CalculatorPage() {
-  await requireUserId();
-
+export default function CalculatorPage() {
   return (
     <Stack gap="xl">
       <div>

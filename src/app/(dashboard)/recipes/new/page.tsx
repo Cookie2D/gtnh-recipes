@@ -1,7 +1,8 @@
-import { Stack, Title, Badge } from "@mantine/core";
+import { Stack, Title, Badge, Skeleton } from "@mantine/core";
 import RecipeForm from "@/components/recipes/RecipeForm";
-import { requireUserId } from "@/lib/data/auth";
+import { getUserId } from "@/lib/data/auth";
 import { getRecipesWithVariants, extractIngredientNames } from "@/lib/data/recipes";
+import { Suspense } from "react";
 
 interface Props {
   searchParams: Promise<{ name?: string }>;
@@ -9,11 +10,6 @@ interface Props {
 
 export default async function NewRecipePage({ searchParams }: Props) {
   const { name } = await searchParams;
-  const userId = await requireUserId();
-  const recipes = await getRecipesWithVariants(userId);
-
-  const existingRecipes = recipes.map((r) => ({ id: r.id, name: r.name }));
-  const ingredientNames = extractIngredientNames(recipes);
 
   return (
     <Stack gap="xl">
@@ -26,11 +22,35 @@ export default async function NewRecipePage({ searchParams }: Props) {
           Define what an item is made of and which machine produces it.
         </p>
       </div>
-      <RecipeForm
-        initialName={name ?? ""}
-        existingRecipes={existingRecipes}
-        ingredientNames={ingredientNames}
-      />
+      <Suspense fallback={<RecipeFormSkeleton />}>
+        <NewRecipeFormData initialName={name ?? ""} />
+      </Suspense>
+    </Stack>
+  );
+}
+
+async function NewRecipeFormData({ initialName }: { initialName: string }) {
+  const userId = await getUserId();
+  const recipes = await getRecipesWithVariants(userId);
+  const existingRecipes = recipes.map((r) => ({ id: r.id, name: r.name }));
+  const ingredientNames = extractIngredientNames(recipes);
+
+  return (
+    <RecipeForm
+      initialName={initialName}
+      existingRecipes={existingRecipes}
+      ingredientNames={ingredientNames}
+    />
+  );
+}
+
+function RecipeFormSkeleton() {
+  return (
+    <Stack gap="md">
+      <Skeleton height={40} radius="sm" />
+      <Skeleton height={40} radius="sm" />
+      <Skeleton height={120} radius="sm" />
+      <Skeleton height={40} width={120} radius="sm" />
     </Stack>
   );
 }

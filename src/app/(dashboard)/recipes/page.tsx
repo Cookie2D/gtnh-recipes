@@ -1,12 +1,9 @@
-import { requireUserId } from "@/lib/data/auth";
 import RecipesInfiniteList from "@/components/recipes/RecipesInfiniteList";
 import { Group, Stack, Title } from "@mantine/core";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 
-export default async function RecipesPage() {
-  await requireUserId();
-
+export default function RecipesPage() {
   return (
     <Stack gap="xl">
       <Group justify="space-between" align="center">
